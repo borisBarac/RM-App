@@ -1,0 +1,30 @@
+{
+  "schemaName" : "Api",
+  "input" : {
+    "operationSearchPaths" : [
+      "*.graphql"
+    ],
+    "schemaSearchPaths" : [
+      "*.graphqls"
+    ]
+  },
+  "output" : {
+    "testMocks" : {
+      "absolute" : {
+        "path" : "../Tests/RMGraphQLTests/Generated"
+      }
+    },
+    "schemaTypes" : {
+      "path" : "./Api",
+      "moduleType" : {
+        "swiftPackageManager" : {
+        }
+      }
+    },
+    "operations" : {
+      "relative": {
+        "subpath": "Api/Sources"
+      }
+    }
+  }
+}
