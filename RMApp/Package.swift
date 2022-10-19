@@ -5,6 +5,7 @@ import PackageDescription
 
 let TCA: Target.Dependency = .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
 let services: Target.Dependency = "Services"
+let helpers: Target.Dependency = "Helpers"
 let rmGql: Target.Dependency = .product(name: "RMGraphQL", package: "RMGraphQL")
 
 let package = Package(
@@ -24,6 +25,8 @@ let package = Package(
         .library(
             name: "HomePage",
             targets: ["HomePage"]),
+        .library(name: "Helpers",
+                 targets: ["Helpers"])
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.43.0")),
@@ -34,6 +37,7 @@ let package = Package(
             name: "AppCore",
             dependencies: [
                 TCA,
+                helpers,
             ]),
         .testTarget(
             name: "AppCoreTests",
@@ -53,9 +57,18 @@ let package = Package(
             dependencies: [
                 TCA,
                 services,
+                helpers,
             ]),
         .testTarget(
             name: "HomePageTests",
             dependencies: ["HomePage"]),
+
+        .target(
+            name: "Helpers",
+            dependencies: [
+            ]),
+        .testTarget(
+            name: "HelpersTests",
+            dependencies: ["Helpers"]),
     ]
 )
