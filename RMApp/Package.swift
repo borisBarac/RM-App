@@ -8,6 +8,8 @@ let services: Target.Dependency = "Services"
 let helpers: Target.Dependency = "Helpers"
 let rmGql: Target.Dependency = .product(name: "RMGraphQL", package: "RMGraphQL")
 
+let pageDependecies: [Target.Dependency] = [TCA, services, helpers,]
+
 let package = Package(
     name: "RMApp",
     platforms: [
@@ -16,17 +18,11 @@ let package = Package(
         .macCatalyst(.v15),
     ],
     products: [
-        .library(
-            name: "AppCore",
-            targets: ["AppCore"]),
-        .library(
-            name: "Services",
-            targets: ["Services"]),
-        .library(
-            name: "HomePage",
-            targets: ["HomePage"]),
-        .library(name: "Helpers",
-                 targets: ["Helpers"])
+        .library(name: "AppCore", targets: ["AppCore"]),
+        .library(name: "Services", targets: ["Services"]),
+        .library(name: "Helpers", targets: ["Helpers"]),
+        .library(name: "HomePage", targets: ["HomePage"]),
+        .library(name: "DetailsPage", targets: ["DetailsPage"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.43.0")),
@@ -53,22 +49,29 @@ let package = Package(
             dependencies: ["Services"]),
 
         .target(
-            name: "HomePage",
-            dependencies: [
-                TCA,
-                services,
-                helpers,
-            ]),
-        .testTarget(
-            name: "HomePageTests",
-            dependencies: ["HomePage"]),
-
-        .target(
             name: "Helpers",
             dependencies: [
             ]),
         .testTarget(
             name: "HelpersTests",
             dependencies: ["Helpers"]),
+
+        .target(
+            name: "HomePage",
+            dependencies:
+                pageDependecies),
+        .testTarget(
+            name: "HomePageTests",
+            dependencies: ["HomePage"]),
+
+        .target(
+            name: "DetailsPage",
+            dependencies:
+                pageDependecies),
+        .testTarget(
+            name: "DetailsPageTests",
+            dependencies: ["DetailsPage"]),
+
+        
     ]
 )
