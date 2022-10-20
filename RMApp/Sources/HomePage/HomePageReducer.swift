@@ -1,14 +1,11 @@
 import ComposableArchitecture
 import SwiftUI
-import Dispatch
+import Services
 import Helpers
 import DetailsPage
 
 public struct HomePageReducer: ReducerProtocol, Sendable {
     public typealias ItemsType = [String]
-
-    // used as ID to cancel some task
-    public enum TearDownToken {}
 
     public struct State: Equatable {
         public var items: ItemsType?
@@ -16,7 +13,7 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
         public var emty: String = "Nothing to show :("
         public var loading: Bool = false
         public var error: EquatableError?
-        public var detailState: DetailsPageReducer.State?
+        public var detailState = DetailsPageReducer.State()
 
         public init() {
         }
@@ -25,19 +22,26 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     public enum Action: Equatable {
         case loadData
         case dataLoaded(ItemsType)
-        // item click need to take details action
         case detail(DetailsPageReducer.Action)
         case showError(EquatableError)
     }
 
+    @Dependency(\.rmRepository) var rmRepository
+
     public var body: some ReducerProtocol<State, Action> {
+        Scope(state: \.detailState, action: /Action.detail) {
+            DetailsPageReducer()
+        }
         Reduce { state, action in
             switch action {
             case .loadData:
-                // call effect
+                state.items = nil
                 state.loading = true
                 state.error = nil
-                return .none
+                return rmRepository
+                    .repositoryEffect()
+                    .eraseToEffect()
+                    .map(Action.dataLoaded)
 
             case .dataLoaded(let items):
                 state.items = items
@@ -50,7 +54,7 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 state.loading = false
                 return .none
 
-            case .detail(let detailAction):
+            case .detail:
                 return .none
             }
         }

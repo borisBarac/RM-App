@@ -4,9 +4,6 @@ import Dispatch
 import Helpers
 
 public struct DetailsPageReducer: ReducerProtocol, Sendable {
-    // used as ID to cancel some task
-    public enum TearDownToken {}
-
     public struct State: Equatable {
         public var details: String?
         public init() {
@@ -14,13 +11,19 @@ public struct DetailsPageReducer: ReducerProtocol, Sendable {
     }
 
     public enum Action: Equatable {
-        case doSomething
+        case doSomething(String)
     }
+
+    public init() {}
 
     public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
-                .none
+            switch action {
+            case .doSomething(let detailsText):
+                state.details = detailsText
+                return .none
+            }
         }
     }
-    
+
 }
