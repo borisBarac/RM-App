@@ -1,5 +1,5 @@
 import Foundation
 
-public enum AppError {
+public enum AppError: Error {
     case unknown
 }
