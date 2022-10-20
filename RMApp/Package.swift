@@ -59,7 +59,9 @@ let package = Package(
         .target(
             name: "HomePage",
             dependencies:
-                pageDependecies),
+                pageDependecies + [
+                    "DetailsPage",
+                ]),
         .testTarget(
             name: "HomePageTests",
             dependencies: ["HomePage"]),
