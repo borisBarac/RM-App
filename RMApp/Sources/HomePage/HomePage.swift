@@ -1,6 +1,15 @@
 import SwiftUI
+import ComposableArchitecture
 
 public struct HomePageView: View {
+    public struct ViewState: Equatable {
+        public init(state: HomePageReducer.State) {
+        }
+    }
+
+    public enum ViewAction {
+    }
+
     public init() {
     }
 
@@ -9,6 +18,15 @@ public struct HomePageView: View {
             Text("Hello, HomePage")
         }
         .padding()
+    }
+}
+
+public extension HomePageReducer.Action {
+    init(action: HomePageView.ViewAction) {
+        switch action {
+        default:
+            self = .loadData
+        }
     }
 }
 
