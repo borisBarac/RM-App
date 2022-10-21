@@ -9,7 +9,7 @@ public class RMRepository {
     public typealias RMEffect = AnyPublisher<[String], Never>
 
     public func repositoryEffect() -> RMEffect {
-        Just(["f1, f2, f3"]).eraseToAnyPublisher()
+        Just(["f1", "f2", "f3"]).eraseToAnyPublisher()
     }
 
     public func dummyRepositoryEffect() -> RMEffect {

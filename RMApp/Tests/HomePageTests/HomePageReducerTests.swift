@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import Helpers
+import DetailsPage
 import XCTest
 @testable import HomePage
 
@@ -26,14 +27,14 @@ final class HomePageReducerTests: XCTestCase {
         _ = await store.send(.loadData) { state in
             state.loading = true
         }
-        _ = await store.receive(.dataLoaded(["f1, f2, f3"])) { state in
-            state.items = ["f1, f2, f3"]
+        _ = await store.receive(.dataLoaded(mockArrayGlobal)) { state in
+            state.items = mockArrayGlobal
             state.loading = false
         }
     }
 
     func testLoadDetailsFlow() async throws {
-        let mockArray = ["f1, f2, f3"]
+        let mockArray = mockArrayGlobal
         _ = await store.send(.loadData) { state in
             state.loading = true
         }
@@ -41,12 +42,22 @@ final class HomePageReducerTests: XCTestCase {
             state.items = mockArray
             state.loading = false
         }
+        _ = await store.send(.setDetailsPresented(true)) { state in
+            state.detailsPresented = true
+            state.detailState = DetailsPageReducer.State()
+        }
         _ = await store.send(.detail(.doSomething(mockArray.first!))) { state in
-            state.detailState.details = mockArray.first!
+            state.detailState?.details = mockArray.first!
+        }
+        _ = await store.send(.setDetailsPresented(false)) { state in
+            state.detailsPresented = false
+            state.detailState = nil
         }
     }
 
 }
+
+private let mockArrayGlobal = ["f1", "f2", "f3"]
 
 
 //    @MainActor

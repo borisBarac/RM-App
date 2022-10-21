@@ -8,27 +8,23 @@ public struct HomePageView: View {
 
     public struct ViewState: Equatable {
         var showLoadingIndicator: Bool
-        var emptyText: String
+        var detailsPresented: Bool
+        var emptyText = "We do not have any data. :("
         var items: [String]
 
-        var emptyStateText: String? {
-            items.count > 0 ? nil : emptyText
-        }
-
-        var hasItems: Bool {
-            items.count > 0
-        }
+        var emptyStateText: String? { items.count > 0 ? nil : emptyText }
+        var hasItems: Bool { items.count > 0 }
 
         public init(state: HomePageReducer.State) {
             showLoadingIndicator = state.loading
-            emptyText = state.emty
+            detailsPresented = state.detailsPresented
             items = state.items ?? []
         }
     }
 
     public enum ViewAction {
         case refresh
-        case detailsClick
+        case detailsClick(Bool)
     }
 
     public init(store: HomePageStore) {
@@ -46,7 +42,7 @@ public struct HomePageView: View {
                     LazyVStack {
                         ForEach(viewStore.items, id: \.self) {
                             Text($0).onTapGesture {
-                                viewStore.send(ViewAction.detailsClick)
+                                viewStore.send(ViewAction.detailsClick(true))
                             }
                         }
                     }
@@ -55,26 +51,19 @@ public struct HomePageView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     viewStore.send(ViewAction.refresh)
                 }
+            }.sheet(isPresented: viewStore.binding(
+                get: \.detailsPresented,
+                send: { .detailsClick($0) })
+            ) {
+                IfLetStore(self.store.scope(state: \.detailState, action: HomePageReducer.Action.detail)) { store in
+                    Text("YEEEYYYYEEEYYYYE")
+                    Text("!!!!!!! !!!!!!!!!!!!!!!!")
+                }
             }
-
-
-//            .sheet(
-//                isPresented: viewStore.binding(
-//                  get: \.isSheetPresented,
-//                  send: LoadThenPresent.Action.setSheet(isPresented:)
-//                )
-//              ) {
-//                IfLetStore(
-//                  self.store.scope(
-//                    state: \.optionalCounter,
-//                    action: LoadThenPresent.Action.optionalCounter
-//                  )
-//                ) {
-//                  CounterView(store: $0)
-//                }
-//              }
-//              .navigationTitle("Load and present")
-//              .onDisappear { viewStore.send(.onDisappear) }
+            .navigationTitle("Detail Page")
+            .onDisappear {
+                viewStore.send(.detailsClick(false))
+            }
         }
     }
 
@@ -86,8 +75,8 @@ public extension HomePageReducer.Action {
         switch action {
         case .refresh:
             self = .loadData
-        case .detailsClick:
-            self = .detail(.doSomething("TEST TEST"))
+        case .detailsClick(let presented):
+            self = .setDetailsPresented(presented)
         }
     }
 }

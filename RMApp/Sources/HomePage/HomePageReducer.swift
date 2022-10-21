@@ -9,11 +9,11 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
 
     public struct State: Equatable {
         public var items: ItemsType?
-        // this is gonna need to be moved to Reducer-View combo
-        public var emty: String = "Nothing to show :("
         public var loading: Bool = false
         public var error: EquatableError?
-        public var detailState = DetailsPageReducer.State()
+
+        public var detailState: DetailsPageReducer.State?
+        public var detailsPresented: Bool = false
 
         public init() {
         }
@@ -23,15 +23,13 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
         case loadData
         case dataLoaded(ItemsType)
         case detail(DetailsPageReducer.Action)
+        case setDetailsPresented(Bool)
         case showError(EquatableError)
     }
 
     @Dependency(\.rmRepository) var rmRepository
 
     public var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.detailState, action: /Action.detail) {
-            DetailsPageReducer()
-        }
         Reduce { state, action in
             switch action {
             case .loadData:
@@ -54,9 +52,16 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 state.loading = false
                 return .none
 
+            case .setDetailsPresented(let presented):
+                state.detailsPresented = presented
+                state.detailState = presented ? DetailsPageReducer.State() : nil
+                return .none
+
             case .detail:
                 return .none
             }
+        }.ifLet(\.detailState, action: /Action.detail) {
+            DetailsPageReducer()
         }
     }
 }
