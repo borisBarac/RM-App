@@ -14,8 +14,12 @@ let package = Package(
     name: "RMApp",
     platforms: [
         .iOS(.v15),
-        .macOS(.v12),
         .macCatalyst(.v15),
+
+        // this target is here becase XCODE can not attach to simulator without a host app
+        // so this makes XC testing easier and faster, and they can be run in parallel
+        // other workaround is to add XCODE to BASH PATH, and run tests with swift test
+        .macOS(.v12),
     ],
     products: [
         .library(name: "AppCore", targets: ["AppCore"]),
