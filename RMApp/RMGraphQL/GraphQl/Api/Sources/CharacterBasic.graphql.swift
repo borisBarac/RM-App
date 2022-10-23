@@ -6,15 +6,15 @@ import ApolloAPI
 @_exported import enum ApolloAPI.GraphQLNullable
 import Api
 
-public struct CharacterFields: Api.SelectionSet, Fragment {
+public struct CharacterBasic: Api.SelectionSet, Fragment {
   public static var fragmentDefinition: StaticString { """
-    fragment characterFields on Character {
+    fragment characterBasic on Character {
       __typename
+      id
       name
       status
       type
       image
-      id
     }
     """ }
 
@@ -23,13 +23,15 @@ public struct CharacterFields: Api.SelectionSet, Fragment {
 
   public static var __parentType: ParentType { Api.Objects.Character }
   public static var __selections: [Selection] { [
+    .field("id", Api.ID?.self),
     .field("name", String?.self),
     .field("status", String?.self),
     .field("type", String?.self),
     .field("image", String?.self),
-    .field("id", Api.ID?.self),
   ] }
 
+  /// The id of the character.
+  public var id: Api.ID? { __data["id"] }
   /// The name of the character.
   public var name: String? { __data["name"] }
   /// The status of the character ('Alive', 'Dead' or 'unknown').
@@ -39,6 +41,4 @@ public struct CharacterFields: Api.SelectionSet, Fragment {
   /// Link to the character's image.
   /// All images are 300x300px and most are medium shots or portraits since they are intended to be used as avatars.
   public var image: String? { __data["image"] }
-  /// The id of the character.
-  public var id: Api.ID? { __data["id"] }
 }

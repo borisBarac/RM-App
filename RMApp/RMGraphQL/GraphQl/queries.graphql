@@ -1,0 +1,54 @@
+# Fragments
+fragment characterBasic on Character {
+  id
+  name
+  status
+  type
+  image
+}
+
+fragment characterEpisode on Character {
+  episode {
+	id
+	name
+	characters {
+	  id
+	}
+  }
+}
+
+fragment characterOrigin on Character {
+  origin {
+	id
+	name
+	dimension
+	residents {
+	  id
+	  name
+	  image
+	}
+  }
+}
+
+#
+# @include does not work with current version
+#
+
+#Main Queries
+query CharactersForPage($page: Int = 0) {
+  Characters: characters(page: $page) {
+	results {
+	  ...characterBasic
+	  ...characterEpisode
+	  ...characterOrigin
+	}
+  }
+}
+
+query CharactersWithIds($ids: [ID!]!) {
+  Characters: charactersByIds(ids: $ids) {
+	...characterBasic
+	...characterEpisode
+	...characterOrigin
+  }
+}
