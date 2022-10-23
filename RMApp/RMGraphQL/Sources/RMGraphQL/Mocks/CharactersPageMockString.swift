@@ -20,6 +20,13 @@ public var MOCK_STRING_CHARACTERS_PAGE: String {
       "data": {
         "Characters": {
           "__typename": "Characters",
+          "info": {
+            "__typename": "Info",
+            "count": 826,
+            "pages": 42,
+            "next": 2,
+            "prev": null
+          },
           "results": [
             {
               "__typename": "Character",
@@ -109,89 +116,6 @@ public var MOCK_STRING_CHARACTERS_PAGE: String {
                     {
                       "__typename": "Character",
                       "id": "435"
-                    }
-                  ]
-                },
-                {
-                  "__typename": "Episode",
-                  "id": "2",
-                  "name": "Lawnmower Dog",
-                  "characters": [
-                    {
-                      "__typename": "Character",
-                      "id": "1"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "2"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "38"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "46"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "63"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "80"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "175"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "221"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "239"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "246"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "304"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "305"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "306"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "329"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "338"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "396"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "397"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "398"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "405"
                     }
                   ]
                 }
@@ -455,89 +379,6 @@ public var MOCK_STRING_CHARACTERS_PAGE: String {
                     {
                       "__typename": "Character",
                       "id": "435"
-                    }
-                  ]
-                },
-                {
-                  "__typename": "Episode",
-                  "id": "2",
-                  "name": "Lawnmower Dog",
-                  "characters": [
-                    {
-                      "__typename": "Character",
-                      "id": "1"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "2"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "38"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "46"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "63"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "80"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "175"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "221"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "239"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "246"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "304"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "305"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "306"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "329"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "338"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "396"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "397"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "398"
-                    },
-                    {
-                      "__typename": "Character",
-                      "id": "405"
                     }
                   ]
                 }

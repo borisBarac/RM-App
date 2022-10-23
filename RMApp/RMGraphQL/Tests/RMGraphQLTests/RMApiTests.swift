@@ -25,10 +25,13 @@ final class RMApiTests: XCTestCase {
         let data = try? await rmApi.getCharacters(page: 0)
         XCTAssertNotNil(data, "Data is NULL")
 
-        let firstCharacter: RMApi.CharacterPageObject? = data?.first
+        let firstCharacter = data?.characters.first
         XCTAssertNotNil(firstCharacter)
         XCTAssertNotNil(firstCharacter!.episode)
         XCTAssertNotNil(firstCharacter!.origin)
+
+        let pageInfo = data?.info
+        XCTAssertNotNil(pageInfo)
     }
 
     #warning("SHOULD NOT RUN IN CI")

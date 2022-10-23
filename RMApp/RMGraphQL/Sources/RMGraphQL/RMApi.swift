@@ -5,7 +5,20 @@ import Api
 
 public struct RMApi {
     public typealias CharacterPageObject = CharactersForPageQuery.Data.Characters.Result
+    public typealias CharacterPageInfoObject = CharactersForPageQuery.Data.Characters.Info
     public typealias CharactersWithIdsObject = CharactersWithIdsQuery.Data.Character
+    public typealias GQLGenericReturnObject = Api.SelectionSet
+
+    public struct CharactersPage {
+        public let characters: [CharacterPageObject]
+        public let info: CharacterPageInfoObject?
+
+        public init(characters: [RMApi.CharacterPageObject],
+                    info: RMApi.CharacterPageInfoObject? = nil) {
+            self.characters = characters
+            self.info = info
+        }
+    }
 
     let apolloClient: ApolloClient
     let logger: Logger
@@ -23,14 +36,18 @@ public struct RMApi {
         apolloClient =  ApolloClient(networkTransport: requestChainTransport, store: store)
     }
 
-    public func getCharacters(page: Int) async throws -> [CharacterPageObject] {
+    public func getCharacters(page: Int) async throws -> CharactersPage {
         let query = CharactersForPageQuery(page: GraphQLNullable<Int>(integerLiteral: page))
         do {
             return try await withCheckedThrowingContinuation { continuation in
                 apolloClient.fetch(query: query) { result in
                     switch result {
                     case .success(let data):
-                        continuation.resume(returning: (data.data?.characters?.results?.compactMap { $0 } ?? []))
+                        // apollo generetes characters like:  [Character?]?
+                        // so that is why we have have compactmap here
+                        let retData = CharactersPage(characters: (data.data?.characters?.results?.compactMap { $0 } ?? []),
+                                                     info: data.data?.characters?.info)
+                        continuation.resume(returning: retData)
                     case .failure(let error):
                         continuation.resume(throwing: check(error: error))
                     }
@@ -49,6 +66,8 @@ public struct RMApi {
                 apolloClient.fetch(query: query) { result in
                     switch result {
                     case .success(let data):
+                        // apollo generetes characters like:  [Character?]?
+                        // so that is why we have have compactmap here
                         continuation.resume(returning: (data.data?.characters?.compactMap { $0 } ?? []))
                     case .failure(let error):
                         continuation.resume(throwing: check(error: error))

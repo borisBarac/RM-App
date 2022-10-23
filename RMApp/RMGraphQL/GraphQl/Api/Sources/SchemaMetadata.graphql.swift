@@ -24,6 +24,7 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     switch typename {
     case "Query": return Api.Objects.Query
     case "Characters": return Api.Objects.Characters
+    case "Info": return Api.Objects.Info
     case "Character": return Api.Objects.Character
     case "Episode": return Api.Objects.Episode
     case "Location": return Api.Objects.Location

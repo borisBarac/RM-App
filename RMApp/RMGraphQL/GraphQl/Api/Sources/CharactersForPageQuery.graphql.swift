@@ -14,6 +14,13 @@ public class CharactersForPageQuery: GraphQLQuery {
       query CharactersForPage($page: Int = 0) {
         Characters: characters(page: $page) {
           __typename
+          info {
+            __typename
+            count
+            pages
+            next
+            prev
+          }
           results {
             __typename
             ...characterBasic
@@ -55,10 +62,37 @@ public class CharactersForPageQuery: GraphQLQuery {
 
       public static var __parentType: ParentType { Api.Objects.Characters }
       public static var __selections: [Selection] { [
+        .field("info", Info?.self),
         .field("results", [Result?]?.self),
       ] }
 
+      public var info: Info? { __data["info"] }
       public var results: [Result?]? { __data["results"] }
+
+      /// Characters.Info
+      ///
+      /// Parent Type: `Info`
+      public struct Info: Api.SelectionSet {
+        public let __data: DataDict
+        public init(data: DataDict) { __data = data }
+
+        public static var __parentType: ParentType { Api.Objects.Info }
+        public static var __selections: [Selection] { [
+          .field("count", Int?.self),
+          .field("pages", Int?.self),
+          .field("next", Int?.self),
+          .field("prev", Int?.self),
+        ] }
+
+        /// The length of the response.
+        public var count: Int? { __data["count"] }
+        /// The amount of pages.
+        public var pages: Int? { __data["pages"] }
+        /// Number of the next page (if it exists)
+        public var next: Int? { __data["next"] }
+        /// Number of the previous page (if it exists)
+        public var prev: Int? { __data["prev"] }
+      }
 
       /// Characters.Result
       ///

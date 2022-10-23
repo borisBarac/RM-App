@@ -37,6 +37,12 @@ fragment characterOrigin on Character {
 #Main Queries
 query CharactersForPage($page: Int = 0) {
   Characters: characters(page: $page) {
+	info {
+	  count
+	  pages
+	  next
+	  prev
+	}
 	results {
 	  ...characterBasic
 	  ...characterEpisode
