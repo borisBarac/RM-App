@@ -28,3 +28,16 @@ public class MockInterceptor: ApolloInterceptor, Cancellable {
     public func cancel() {
     }
 }
+
+// Test helper
+public extension MockInterceptor {
+    static func passMock(with mock: String) -> MockInterceptor {
+        MockInterceptor(mockResponceString: mock)
+    }
+
+    static func failMock() -> MockInterceptor {
+        // defaults to fail
+        MockInterceptor()
+    }
+}
+
