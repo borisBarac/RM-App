@@ -10,13 +10,13 @@ final class AuthInterceptorTests: XCTestCase {
         let config = RMApiConfig(endpont: rmApiEndpont,
                                  loggingLevel: .none,
                                  cashingStrategy: .none,
-                                 mockInterceptor: MockInterceptor.passMock)
+                                 mockInterceptor: MockInterceptor.passMock(with: MOCK_STRING_CHARACTERS_PAGE))
         let authBlock: AuthBlockType? = { _ in
             exp.fulfill()
         }
 
         let rmApi = try RMApi(config: config, authBlock: authBlock)
-        _ = try await rmApi.fetchAllDeadCharacters()
+        _ = try await rmApi.getCharacters(page: 0)
 
         await waitForExpectations(timeout: 3)
     }

@@ -4,6 +4,9 @@ import ApolloSQLite
 import Api
 
 public struct RMApi {
+    public typealias CharacterPageObject = CharactersForPageQuery.Data.Characters.Result
+    public typealias CharactersWithIdsObject = CharactersWithIdsQuery.Data.Character
+
     let apolloClient: ApolloClient
     let logger: Logger
 
@@ -20,15 +23,16 @@ public struct RMApi {
         apolloClient =  ApolloClient(networkTransport: requestChainTransport, store: store)
     }
 
-    public func fetchAllDeadCharacters() async throws -> GraphQLResult<DeadCharactersQuery.Data> {
+    public func getCharacters(page: Int) async throws -> [CharacterPageObject] {
+        let query = CharactersForPageQuery(page: GraphQLNullable<Int>(integerLiteral: page))
         do {
             return try await withCheckedThrowingContinuation { continuation in
-                apolloClient.fetch(query: DeadCharactersQuery()) { result in
+                apolloClient.fetch(query: query) { result in
                     switch result {
                     case .success(let data):
-                        continuation.resume(returning: data)
+                        continuation.resume(returning: (data.data?.characters?.results?.compactMap { $0 } ?? []))
                     case .failure(let error):
-                        continuation.resume(throwing: error)
+                        continuation.resume(throwing: check(error: error))
                     }
                 }
             }
@@ -37,6 +41,34 @@ public struct RMApi {
             throw RMError.asyncConvertionFailed
         }
     }
+
+    public func getCharacters(withIds ids: [Int]) async throws -> [CharactersWithIdsObject] {
+        let query = CharactersWithIdsQuery(ids: ids.map { String($0) })
+        do {
+            return try await withCheckedThrowingContinuation { continuation in
+                apolloClient.fetch(query: query) { result in
+                    switch result {
+                    case .success(let data):
+                        continuation.resume(returning: (data.data?.characters?.compactMap { $0 } ?? []))
+                    case .failure(let error):
+                        continuation.resume(throwing: check(error: error))
+                    }
+                }
+            }
+
+        } catch {
+            throw RMError.asyncConvertionFailed
+        }
+    }
+
+    private func check(error: Error) -> Error {
+        guard let err = error as? GraphQLError else {
+            return error
+        }
+
+        return RMError.graphQlError(err.localizedDescription)
+    }
+
 }
 
 // MARK: - Private helpers

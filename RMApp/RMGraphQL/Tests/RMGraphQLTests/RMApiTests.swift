@@ -1,4 +1,5 @@
 import XCTest
+import Api
 @testable import RMGraphQL
 
 final class RMApiTests: XCTestCase {
@@ -19,22 +20,45 @@ final class RMApiTests: XCTestCase {
     }
 
     #warning("SHOULD NOT RUN IN CI")
-    func testRealApiConnection() async throws {
+    func testGetCharactersWithPage() async throws {
         rmApi = makeLiveSUT()
-        let data = try? await rmApi.fetchAllDeadCharacters()
+        let data = try? await rmApi.getCharacters(page: 0)
+        XCTAssertNotNil(data, "Data is NULL")
+
+        let firstCharacter: RMApi.CharacterPageObject? = data?.first
+        XCTAssertNotNil(firstCharacter)
+        XCTAssertNotNil(firstCharacter!.episode)
+        XCTAssertNotNil(firstCharacter!.origin)
+    }
+
+    #warning("SHOULD NOT RUN IN CI")
+    func testGetCharactersWithIds() async throws {
+        rmApi = makeLiveSUT()
+        let data = try? await rmApi.getCharacters(withIds: [1, 2, 3])
+        XCTAssertNotNil(data, "Data is NULL")
+
+        let firstCharacter: RMApi.CharactersWithIdsObject? = data?.first
+        XCTAssertNotNil(firstCharacter)
+        XCTAssertNotNil(firstCharacter!.episode)
+        XCTAssertNotNil(firstCharacter!.origin)
+    }
+
+    func testCharactersPageMockPass() async throws {
+        rmApi = makeMockSUT(mockPass: true)
+        let data = try? await rmApi.getCharacters(page: 0)
         XCTAssertNotNil(data, "Data is NULL")
     }
 
-    func testMockPass() async throws {
-        rmApi = makeMockSUT(mockPass: true)
-        let data = try? await rmApi.fetchAllDeadCharacters()
+    func testCharactersWithIdsMockPass() async throws {
+        rmApi = makeMockSUT(mockPass: true, mockString: MOCK_STRING_CHARACTERS_PAGE)
+        let data = try? await rmApi.getCharacters(page: 0)
         XCTAssertNotNil(data, "Data is NULL")
     }
 
     func testMockFail() async throws {
         rmApi = makeMockSUT(mockPass: false)
         do {
-            let _ = try await rmApi.fetchAllDeadCharacters()
+            let _ = try await rmApi.getCharacters(page: 0)
         } catch(let error) {
             XCTAssertNotNil(error)
         }
@@ -50,8 +74,8 @@ final class RMApiTests: XCTestCase {
         return api!
     }
 
-    func makeMockSUT(mockPass: Bool) -> RMApi {
-        let mock = mockPass ? MockInterceptor.passMock : MockInterceptor.failMock
+    func makeMockSUT(mockPass: Bool, mockString: String = MOCK_STRING_CHARACTERS_PAGE) -> RMApi {
+        let mock = mockPass ? MockInterceptor.passMock(with: mockString) : MockInterceptor.failMock()
         let config = RMApiConfig(endpont: rmApiEndpont,
                                  loggingLevel: .none,
                                  cashingStrategy: .none,
