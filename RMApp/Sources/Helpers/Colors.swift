@@ -1,4 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public struct Theme {
     @Environment(\.colorScheme) var colorScheme
@@ -16,6 +19,7 @@ public struct Theme {
 
 }
 
+#if canImport(UIKit)
 public extension UIColor {
     func inverse () -> UIColor {
         var r:CGFloat = 0.0; var g:CGFloat = 0.0; var b:CGFloat = 0.0; var a:CGFloat = 0.0;
@@ -25,3 +29,4 @@ public extension UIColor {
         return .black // Return a default colour
     }
 }
+#endif
