@@ -56,6 +56,7 @@ let package = Package(
         .target(
             name: "Helpers",
             dependencies: [
+                rmGql,
             ]),
         .testTarget(
             name: "HelpersTests",
