@@ -48,6 +48,7 @@ let package = Package(
             dependencies: [
                 rmGql,
                 TCA,
+                helpers,
             ]),
         .testTarget(
             name: "ServicesTests",
