@@ -29,4 +29,13 @@ public enum AppError: Error, LocalizedError {
         }
     }
 
+
+    public func printError(file: String = #file, line: Int = #line) {
+        print("🔴 \(file): \(line): \(errorDescription ?? "")")
+    }
+
+}
+
+public func printError(message: String, file: String = #file, line: Int = #line) {
+    print("🔴 \(file): \(line): \(message)")
 }

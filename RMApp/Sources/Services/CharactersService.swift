@@ -14,7 +14,7 @@ public class RMCharacterService {
 
 
 extension RMCharacterService: DependencyKey {
-    static let rmApi = try? RMApi(config: RMApiConfig(endpont: rmApiEndpont,
+    private static let rmApi = try? RMApi(config: RMApiConfig(endpont: rmApiEndpont,
                                                       loggingLevel: .error,
                                                       cashingStrategy: .sql))
 
@@ -23,7 +23,17 @@ extension RMCharacterService: DependencyKey {
             throw AppError.couldNotInitGraphQlClient
         }
 
-        return try await rmApi.getCharacters(page: page)
+        do {
+            return try await rmApi.getCharacters(page: page)
+        } catch let error {
+            if let throwError = error as? RMError {
+                printError(message: throwError.localizedDescription)
+                throw AppError.rmApiError(throwError)
+            }
+
+            printError(message: "RMCharacterService: general error thrown")
+            throw AppError.unknown
+        }
     })
 }
 
@@ -33,7 +43,7 @@ extension RMCharacterService: TestDependencyKey {
 }
 
 extension DependencyValues {
-  public var authenticationClient: RMCharacterService {
+  public var rmCharacterService: RMCharacterService {
     get { self[RMCharacterService.self] }
     set { self[RMCharacterService.self] = newValue }
   }
