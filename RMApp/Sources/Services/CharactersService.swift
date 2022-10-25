@@ -14,7 +14,6 @@ public class RMCharacterService {
     }
 }
 
-
 extension RMCharacterService: DependencyKey {
     private static let rmApi = try? RMApi(config: RMApiConfig(endpont: rmApiEndpont,
                                                       loggingLevel: .error,
@@ -37,6 +36,12 @@ extension RMCharacterService: DependencyKey {
             throw AppError.unknown
         }
     })
+
+    public static var previewValue: RMCharacterService {
+        RMCharacterService { _ in
+            RMGraphQL.charactersPageMock()
+        }
+    }
 }
 
 extension RMCharacterService: TestDependencyKey {

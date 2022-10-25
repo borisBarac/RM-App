@@ -67,7 +67,6 @@ public struct HomePageView: View {
         }
     }
 
-
 }
 
 public extension HomePageReducer.Action {
