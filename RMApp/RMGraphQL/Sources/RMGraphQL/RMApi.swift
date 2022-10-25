@@ -42,11 +42,11 @@ public struct RMApi {
             return try await withCheckedThrowingContinuation { continuation in
                 apolloClient.fetch(query: query) { result in
                     switch result {
-                    case .success(let data):
+                    case .success(let result):
                         // apollo generetes characters like:  [Character?]?
                         // so that is why we have have compactmap here
-                        let retData = CharactersPage(characters: (data.data?.characters?.results?.compactMap { $0 } ?? []),
-                                                     info: data.data?.characters?.info)
+                        let retData = CharactersPage(characters: (result.data?.characters?.results?.compactMap { $0 } ?? []),
+                                                     info: result.data?.characters?.info)
                         continuation.resume(returning: retData)
                     case .failure(let error):
                         continuation.resume(throwing: check(error: error))

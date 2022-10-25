@@ -1,4 +1,6 @@
 import Foundation
+import ApolloTestSupport
+import Api
 
 /*
  query CharactersForPage1111($page: Int = 0) {
@@ -13,6 +15,29 @@ import Foundation
          }
        }
  */
+
+
+public func charactersPageMock() -> RMApi.CharactersPage {
+    let mock = Mock(info: Mock(count: 33, next: 2, pages: 3, prev: nil),
+                    results: [
+                        Mock(episode: [], id: "1", image: nil, name: "Rick1", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "2", image: nil, name: "Rick22", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "3", image: nil, name: "Rick333333", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "4", image: nil, name: "Rick444", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                    ])
+
+//    let data = CharactersForPageQuery.Data.from(mock)
+//    let retData = RMApi.CharactersPage(characters: (data.characters?.results?.compactMap { $0 } ?? []),
+//                                 info: data.characters?.info)
+    let data = CharactersForPageQuery.Data.Characters.from(mock)
+
+    let retData = RMApi.CharactersPage(characters: (data.results?.compactMap { $0 } ?? []),
+                                 info: data.info)
+
+    return retData
+}
+
+
 
 public var MOCK_STRING_CHARACTERS_PAGE: String {
     """
