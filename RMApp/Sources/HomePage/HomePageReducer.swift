@@ -4,11 +4,16 @@ import Services
 import Helpers
 import DetailsPage
 
+// delete me
+import RMGraphQL
+
 public struct HomePageReducer: ReducerProtocol, Sendable {
-    public typealias ItemsType = [String]
+
+    // needs a refactor with paging
+    public typealias ItemsType = RMApi.CharacterPageObject
 
     public struct State: Equatable {
-        public var items: ItemsType?
+        public var items: [ItemsType]?
         public var loading: Bool = false
         public var error: EquatableError?
 
@@ -21,13 +26,14 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
 
     public enum Action: Equatable {
         case loadData
-        case dataLoaded(ItemsType)
+        case dataLoaded(TaskResult<GQLChactersPage>)
+
         case detail(DetailsPageReducer.Action)
         case setDetailsPresented(Bool)
         case showError(EquatableError)
     }
 
-    @Dependency(\.rmRepository) var rmRepository
+    @Dependency(\.rmCharacterService) var rmCharacterService
 
     public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
@@ -36,15 +42,23 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 state.items = nil
                 state.loading = true
                 state.error = nil
-                return rmRepository
-                    .repositoryEffect()
-                    .eraseToEffect()
-                    .map(Action.dataLoaded)
+                return .task(priority: .userInitiated) {
+                    .dataLoaded(
+                        await TaskResult {
+                            try await self.rmCharacterService.fetchCharactersForPage(2)
+                        }
+                    )
+                }
 
-            case .dataLoaded(let items):
-                state.items = items
+            case .dataLoaded(.success(let items)):
+                state.items = items.characters
                 state.loading = false
                 state.error = nil
+                return .none
+
+            case .dataLoaded(.failure(let error)):
+                state.loading = false
+                state.error = EquatableError(error)
                 return .none
 
             case .showError(let eqError):

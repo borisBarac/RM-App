@@ -18,7 +18,7 @@ public struct HomePageView: View {
         public init(state: HomePageReducer.State) {
             showLoadingIndicator = state.loading
             detailsPresented = state.detailsPresented
-            items = state.items ?? []
+            items = state.items?.map { $0.name ?? "" } ?? []
         }
     }
 

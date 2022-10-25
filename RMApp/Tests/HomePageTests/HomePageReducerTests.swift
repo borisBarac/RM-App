@@ -1,6 +1,8 @@
 import ComposableArchitecture
 import Helpers
 import DetailsPage
+import RMGraphQL
+
 import XCTest
 @testable import HomePage
 
@@ -13,6 +15,10 @@ final class HomePageReducerTests: XCTestCase {
         try await super.setUp()
         store = TestStore(initialState: HomePageReducer.State(),
                           reducer: HomePageReducer())
+
+        store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
+            return mockCharactersPage
+        }
     }
 
     func testSendError() async throws {
@@ -27,27 +33,26 @@ final class HomePageReducerTests: XCTestCase {
         _ = await store.send(.loadData) { state in
             state.loading = true
         }
-        _ = await store.receive(.dataLoaded(mockArrayGlobal)) { state in
-            state.items = mockArrayGlobal
+        _ = await store.receive(.dataLoaded(.success(mockCharactersPage))) { state in
+            state.items = mockCharactersPage.characters
             state.loading = false
         }
     }
 
     func testLoadDetailsFlow() async throws {
-        let mockArray = mockArrayGlobal
         _ = await store.send(.loadData) { state in
             state.loading = true
         }
-        _ = await store.receive(.dataLoaded(mockArray)) { state in
-            state.items = mockArray
+        _ = await store.receive(.dataLoaded(.success(mockCharactersPage))) { state in
+            state.items = mockCharactersPage.characters
             state.loading = false
         }
         _ = await store.send(.setDetailsPresented(true)) { state in
             state.detailsPresented = true
             state.detailState = DetailsPageReducer.State()
         }
-        _ = await store.send(.detail(.doSomething(mockArray.first!))) { state in
-            state.detailState?.details = mockArray.first!
+        _ = await store.send(.detail(.doSomething(mockCharactersPage.characters.first!.name ?? ""))) { state in
+            state.detailState?.details = mockCharactersPage.characters.first!.name
         }
         _ = await store.send(.setDetailsPresented(false)) { state in
             state.detailsPresented = false
@@ -57,4 +62,4 @@ final class HomePageReducerTests: XCTestCase {
 
 }
 
-private let mockArrayGlobal = ["f1", "f2", "f3"]
+private var mockCharactersPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }

@@ -4,10 +4,12 @@ import ComposableArchitecture
 import Helpers
 import XCTestDynamicOverlay
 
-public class RMCharacterService {
-    public var fetchCharactersForPage: @Sendable (Int) async throws -> RMApi.CharactersPage
+public typealias GQLChactersPage = RMApi.CharactersPage
 
-    public required init(fetchCharactersForPage: @escaping @Sendable (Int) async throws -> RMApi.CharactersPage) {
+public class RMCharacterService {
+    public var fetchCharactersForPage: @Sendable (Int) async throws -> GQLChactersPage
+
+    public required init(fetchCharactersForPage: @escaping @Sendable (Int) async throws -> GQLChactersPage) {
         self.fetchCharactersForPage = fetchCharactersForPage
     }
 }
@@ -37,7 +39,6 @@ extension RMCharacterService: DependencyKey {
     })
 }
 
-
 extension RMCharacterService: TestDependencyKey {
     public static let testValue = RMCharacterService(fetchCharactersForPage: XCTUnimplemented("RMCharacterService.fetchCharactersForPage"))
 }
@@ -48,3 +49,11 @@ extension DependencyValues {
     set { self[RMCharacterService.self] = newValue }
   }
 }
+
+extension GQLChactersPage: Equatable {
+    public static func == (lhs: RMApi.CharactersPage, rhs: RMApi.CharactersPage) -> Bool {
+        return (lhs.characters == rhs.characters && lhs.info == rhs.info)
+    }
+}
+
+
