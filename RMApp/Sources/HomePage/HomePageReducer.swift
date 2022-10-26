@@ -52,6 +52,10 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
             case .loadData(let page):
                 state.loading = true
                 state.error = nil
+                // used for refresh
+                if page == 0 {
+                    state.itemPageDict.removeAll()
+                }
                 return .task(priority: .userInitiated) {
                     .dataLoaded(
                         await TaskResult {

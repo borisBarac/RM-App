@@ -45,7 +45,12 @@ final class HomePageTests: XCTestCase {
                                          _ page: Int,
                                          _ mockCharactersForPage: RMApi.CharactersPage) async {
         _ = await store.receive(.dataLoaded(.success(mockCharactersForPage))) { state in
-            state.items = mockCharactersForPage.characters.map { $0.name ?? "" }
+            state.items = mockCharactersForPage.characters.map {
+                HomePageView.CellModel(id: Int($0.id!) ?? 0,
+                          name: $0.name ?? "",
+                          url: "",
+                          origin: $0.origin?.name ?? "We do not know")
+            }
             state.showLoadingIndicator = false
             state.currentPage = page
         }

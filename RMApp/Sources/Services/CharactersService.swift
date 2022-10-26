@@ -5,6 +5,11 @@ import Helpers
 import XCTestDynamicOverlay
 
 // MARK: Interface Definitions
+// we have typealias here to decouple the Service from RMGraphQL
+// classes using this service do not have to import RMGraphQL this way
+// if we would need to connect to diffrent services from here (GraphQL and Rest dependinc on the country for example)
+// we would need to define types that we gonna use here and map to them from the network types
+// good thing about graphQl is that we define the BE model of the data
 public typealias GQLChactersPage = RMApi.CharactersPage
 public typealias GQLCharactersWithIdsObject = RMApi.CharactersWithIdsObject
 
