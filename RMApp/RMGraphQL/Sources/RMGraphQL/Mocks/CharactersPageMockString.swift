@@ -26,11 +26,7 @@ public func charactersPageMock() -> RMApi.CharactersPage {
                         Mock(episode: [], id: "4", image: nil, name: "Rick444", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
                     ])
 
-//    let data = CharactersForPageQuery.Data.from(mock)
-//    let retData = RMApi.CharactersPage(characters: (data.characters?.results?.compactMap { $0 } ?? []),
-//                                 info: data.characters?.info)
     let data = CharactersForPageQuery.Data.Characters.from(mock)
-
     let retData = RMApi.CharactersPage(characters: (data.results?.compactMap { $0 } ?? []),
                                  info: data.info)
 

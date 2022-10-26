@@ -108,21 +108,21 @@ public class CharactersForPageQuery: GraphQLQuery {
           .fragment(CharacterOrigin.self),
         ] }
 
-        /// The id of the character.
-        public var id: Api.ID? { __data["id"] }
-        /// The name of the character.
-        public var name: String? { __data["name"] }
-        /// The status of the character ('Alive', 'Dead' or 'unknown').
-        public var status: String? { __data["status"] }
-        /// The type or subspecies of the character.
-        public var type: String? { __data["type"] }
-        /// Link to the character's image.
-        /// All images are 300x300px and most are medium shots or portraits since they are intended to be used as avatars.
-        public var image: String? { __data["image"] }
-        /// Episodes in which this character appeared.
-        public var episode: [CharacterEpisode.Episode?] { __data["episode"] }
-        /// The character's origin location
-        public var origin: CharacterOrigin.Origin? { __data["origin"] }
+          /// The id of the character.
+          public var id: Api.ID? { __data["id"] }
+          /// The name of the character.
+          public var name: String? { __data["name"] }
+          /// The status of the character ('Alive', 'Dead' or 'unknown').
+          public var status: String? { __data["status"] }
+          /// The type or subspecies of the character.
+          public var type: String? { __data["type"] }
+          /// Link to the character's image.
+          /// All images are 300x300px and most are medium shots or portraits since they are intended to be used as avatars.
+          public var image: String? { __data["image"] }
+          /// Episodes in which this character appeared.
+          public var episode: [CharacterEpisode.Episode?] { __data["episode"] }
+          /// The character's origin location
+          public var origin: CharacterOrigin.Origin? { __data["origin"] }
 
         public struct Fragments: FragmentContainer {
           public let __data: DataDict

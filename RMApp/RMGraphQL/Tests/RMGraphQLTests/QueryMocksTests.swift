@@ -6,10 +6,15 @@ import Api
 /// so if they break, our upper service testes are gonna break also
 final class QueryMocksTests: XCTestCase {
 
-    func testCharactersMock() async throws {
+    func testCharactersForPageMock() async throws {
         let mock = charactersPageMock()
         XCTAssertTrue((mock.characters.map {$0.name}).count > 0)
         XCTAssertNotNil(mock.info)
+    }
+
+    func testCharactersWithIdsMock() async throws {
+        let mock = charactersWithIdsMock()
+        XCTAssertTrue((mock.compactMap { $0.name }).count > 0)
     }
 
 }

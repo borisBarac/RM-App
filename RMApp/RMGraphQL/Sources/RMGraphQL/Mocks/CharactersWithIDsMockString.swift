@@ -1,11 +1,17 @@
-//
-//  File.swift
-//  
-//
-//  Created by Boris Barac on 23.10.2022.
-//
-
 import Foundation
+import ApolloTestSupport
+import Api
+
+public func charactersWithIdsMock() -> [RMApi.CharactersWithIdsObject] {
+    return [
+        Mock(episode: [], id: "1", image: nil, name: "Rick1", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: [], id: "2", image: nil, name: "Rick22", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: [], id: "3", image: nil, name: "Rick333333", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: [], id: "4", image: nil, name: "Rick444", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+    ].map {
+        CharactersWithIdsQuery.Data.Character.from($0)
+    }
+}
 
 
 var MOCK_STRING_CHARACTERS_WITH_IDS: String {
