@@ -13,17 +13,16 @@ final class HomePageTests: XCTestCase {
                               reducer: HomePageReducer()).scope(state: HomePageView.ViewState.init,
                                                                 action: HomePageReducer.Action.init)
 
+        var page = 1
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
-            return mockCharactersPage
+            return mockCharactersFor1stPage
         }
 
         _ = await store.send(.refresh) { state in
             state.showLoadingIndicator = true
         }
-        _ = await store.receive(.dataLoaded(.success(mockCharactersPage))) { state in
-            state.items = mockCharactersPage.characters.map { $0.name ?? "" }
-            state.showLoadingIndicator = false
-        }
+        await receiveAndCheckPage(store, page, mockCharactersFor1stPage)
+
         _ = await store.send(.detailsClick(true)) { state in
             state.detailsPresented = true
         }
@@ -31,8 +30,27 @@ final class HomePageTests: XCTestCase {
             state.detailsPresented = false
         }
 
+        page = 2
+        store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
+            return mockCharactersFor2ndPage
+        }
+
+        _ = await store.send(.loadNextPage(page)) { state in
+            state.showLoadingIndicator = true
+        }
+        await receiveAndCheckPage(store, page, mockCharactersFor2ndPage)
     }
-    
+
+    fileprivate func receiveAndCheckPage(_ store: TestStore<HomePageReducer.State, HomePageReducer.Action, HomePageView.ViewState, HomePageView.ViewAction, ()>,
+                                         _ page: Int,
+                                         _ mockCharactersForPage: RMApi.CharactersPage) async {
+        _ = await store.receive(.dataLoaded(.success(mockCharactersForPage))) { state in
+            state.items = mockCharactersForPage.characters.map { $0.name ?? "" }
+            state.showLoadingIndicator = false
+            state.currentPage = page
+        }
+    }
 }
 
-private var mockCharactersPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }
+private var mockCharactersFor1stPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }
+private var mockCharactersFor2ndPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 2) }

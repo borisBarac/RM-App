@@ -9,6 +9,7 @@ public struct HomePageView: View {
     public struct ViewState: Equatable {
         var showLoadingIndicator: Bool
         var detailsPresented: Bool
+        var currentPage: Int
         var emptyText = "We do not have any data. :("
         var items: [String]
 
@@ -18,12 +19,14 @@ public struct HomePageView: View {
         public init(state: HomePageReducer.State) {
             showLoadingIndicator = state.loading
             detailsPresented = state.detailsPresented
-            items = state.items?.map { $0.name ?? "" } ?? []
+            currentPage = state.currentPage
+            items = state.getItems(page: currentPage).map { $0.name ?? "" }
         }
     }
 
     public enum ViewAction {
         case refresh
+        case loadNextPage(Int)
         case detailsClick(Bool)
     }
 
@@ -73,7 +76,9 @@ public extension HomePageReducer.Action {
     init(action: HomePageView.ViewAction) {
         switch action {
         case .refresh:
-            self = .loadData
+            self = .loadData(0)
+        case .loadNextPage(let page):
+            self = .loadData(page)
         case .detailsClick(let presented):
             self = .setDetailsPresented(presented)
         }

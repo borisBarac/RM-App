@@ -17,8 +17,8 @@ import Api
  */
 
 
-public func charactersPageMock() -> RMApi.CharactersPage {
-    let mock = Mock(info: Mock(count: 33, next: 2, pages: 3, prev: nil),
+public func charactersPageMock(page: Int = 1) -> RMApi.CharactersPage {
+    let mock = Mock(info: Mock(count: 33, next: page + 1, pages: 366, prev: nil),
                     results: [
                         Mock(episode: [], id: "1", image: nil, name: "Rick1", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
                         Mock(episode: [], id: "2", image: nil, name: "Rick22", origin: nil, status: "MOCKED", type: "MOCK TYPE"),

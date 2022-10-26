@@ -17,7 +17,7 @@ final class HomePageReducerTests: XCTestCase {
                           reducer: HomePageReducer())
 
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
-            return mockCharactersPage
+            return mockCharactersFor1stPage
         }
     }
 
@@ -30,23 +30,21 @@ final class HomePageReducerTests: XCTestCase {
     }
 
     func testLoadDataFlow() async throws {
-        _ = await store.send(.loadData) {
+        let page = 1
+        _ = await store.send(.loadData(page)) {
             $0.loading = true
         }
-        _ = await store.receive(.dataLoaded(.success(mockCharactersPage))) {
-            $0.items = mockCharactersPage.characters
-            $0.loading = false
-        }
+        await receiveAndCheckPage(page, mockCharactersFor1stPage)
     }
 
     func testLoadDetailsFlow() async throws {
-        _ = await store.send(.loadData) {
+        let page = 1
+        _ = await store.send(.loadData(page)) {
             $0.loading = true
         }
-        _ = await store.receive(.dataLoaded(.success(mockCharactersPage))) {
-            $0.items = mockCharactersPage.characters
-            $0.loading = false
-        }
+
+        await receiveAndCheckPage(page, mockCharactersFor1stPage)
+
         _ = await store.send(.setDetailsPresented(true)) {
             $0.detailsPresented = true
             $0.detailState = DetailsPageReducer.State()
@@ -63,6 +61,35 @@ final class HomePageReducerTests: XCTestCase {
         }
     }
 
+    func testLoadingOf1stAnd2ndPage() async throws {
+        var page = 1
+        _ = await store.send(.loadData(page)) {
+            $0.loading = true
+        }
+        await receiveAndCheckPage(page, mockCharactersFor1stPage)
+
+        page = 2
+        store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
+            return mockCharactersFor2ndPage
+        }
+        
+        _ = await store.send(.loadData(page)) {
+            $0.loading = true
+        }
+
+        await receiveAndCheckPage(page, mockCharactersFor2ndPage)
+    }
+
+    fileprivate func receiveAndCheckPage(_ page: Int,
+                                         _ mockCharactersForPage: RMApi.CharactersPage) async {
+        _ = await store.receive(.dataLoaded(.success(mockCharactersForPage))) {
+            $0.itemPageDict[page] = mockCharactersForPage.characters
+            $0.loading = false
+            $0.currentPage = page
+        }
+    }
+
 }
 
-private var mockCharactersPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }
+private var mockCharactersFor1stPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 1) }
+private var mockCharactersFor2ndPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 2) }
