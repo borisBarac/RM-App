@@ -27,13 +27,15 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     public enum Action: Equatable {
         case loadData
         case dataLoaded(TaskResult<GQLChactersPage>)
-
         case detail(DetailsPageReducer.Action)
         case setDetailsPresented(Bool)
         case showError(EquatableError)
     }
 
     @Dependency(\.rmCharacterService) var rmCharacterService
+
+    public init() {
+    }
 
     public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
