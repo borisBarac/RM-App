@@ -1,6 +1,6 @@
 
 /// Fork of https://github.com/diniska/swiftui-system-colors/blob/void/Sources/SystemColors/SystemColors.swift
-/// i do not really see a point to import whole package to get 1 file with static code
+/// I added some weaks to add some colors to macOS
 
 #if canImport(SwiftUI) && canImport(Combine) && (arch(arm64) || arch(x86_64))
 // https://stackoverflow.com/a/61954608
@@ -269,6 +269,26 @@ public extension Color {
     static var highlight: Color { Color(PlatformColor.highlightColor) }
     /// The color to use for virtual shadows cast by raised objects on the screen.
     static var shadow: Color { Color(PlatformColor.shadowColor) }
+
+
+    // #### INJECTED BY ME
+    // We use macOS here only for unit testing
+    // so this colors are not important, but we need the code to compile on macOS
+
+    // MARK: Fill Colors
+    /// An overlay fill color for thin and small shapes.
+    @available(tvOS, unavailable)
+    static var systemFill: Color { Color(PlatformColor.windowBackgroundColor) }
+    /// An overlay fill color for medium-size shapes.
+    @available(tvOS, unavailable)
+    static var secondarySystemFill: Color { Color(PlatformColor.windowBackgroundColor) }
+    /// An overlay fill color for large shapes.
+    @available(tvOS, unavailable)
+    static var tertiarySystemFill: Color { Color(PlatformColor.windowBackgroundColor) }
+    /// An overlay fill color for large areas that contain complex content.
+    @available(tvOS, unavailable)
+    static var quaternarySystemFill: Color { Color(PlatformColor.windowBackgroundColor) }
+    // #### END INJECTED
 }
 
 #endif // UIKit / AppKit condition
