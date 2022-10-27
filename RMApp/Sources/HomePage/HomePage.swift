@@ -51,15 +51,21 @@ public struct HomePageView: View {
         case loading
     }
 
-    struct CellModel: Identifiable, Comparable, Hashable {
+    struct CellModel: Identifiable, Equatable, Hashable {
         let id: Int
         let name: String
         let url: String
         let origin: String
 
-        static func < (lhs: HomePageView.CellModel, rhs: HomePageView.CellModel) -> Bool {
+        static func == (lhs: HomePageView.CellModel, rhs: HomePageView.CellModel) -> Bool {
             rhs.id == lhs.id
         }
+    }
+
+    struct Constants {
+        static var cardRoundedRects: CGFloat = 25
+        static var cardPadding: CGFloat = 8
+        static var erorrAndEmptyCardHeight: CGFloat = 200
     }
 
     public typealias HomePageStore = StoreOf<HomePageReducer>
@@ -71,23 +77,27 @@ public struct HomePageView: View {
 
     public var body: some View {
         WithViewStore(store, observe: ViewState.init, send: HomePageReducer.Action.init) { viewStore in
-            createMainBody(viewStore: viewStore)
-                .onAppear {
-                    viewStore.send(ViewAction.refresh)
+            ZStack {
+                Color.systemFill
+                    .ignoresSafeArea()
+                createMainBody(viewStore: viewStore)
+            }
+            .onAppear {
+                viewStore.send(ViewAction.refresh)
+            }
+            .sheet(isPresented: viewStore.binding(
+                get: \.detailsPresented,
+                send: { .detailsClick($0) })
+            ) {
+                IfLetStore(self.store.scope(state: \.detailState, action: HomePageReducer.Action.detail)) { store in
+                    Text("YEEEYYYYEEEYYYYE")
+                    Text("!!!!!!! !!!!!!!!!!!!!!!!")
                 }
-                .sheet(isPresented: viewStore.binding(
-                    get: \.detailsPresented,
-                    send: { .detailsClick($0) })
-                ) {
-                    IfLetStore(self.store.scope(state: \.detailState, action: HomePageReducer.Action.detail)) { store in
-                        Text("YEEEYYYYEEEYYYYE")
-                        Text("!!!!!!! !!!!!!!!!!!!!!!!")
-                    }
-                }
-                .navigationTitle("Detail Page")
-                .onDisappear {
-                    viewStore.send(.detailsClick(false))
-                }
+            }
+            .navigationTitle("Detail Page")
+            .onDisappear {
+                viewStore.send(.detailsClick(false))
+            }
         }
     }
 
@@ -96,61 +106,74 @@ public struct HomePageView: View {
     private func createMainBody(viewStore: ViewStore<ViewState, ViewAction>) -> some View {
         switch viewStore.viewRenderType {
         case .loading:
-            VStack(spacing: 16) {
-                ProgressView().scaleEffect(2)
-                Text("Loading")
-                    .font(.title2)
-            }
+            LoadingView()
         case .error:
-            VStack(alignment: .center, spacing: 8) {
-                Text("Something went wrong :(")
-                    .font(.title2)
-                    .foregroundColor(.primary)
-                Text(viewStore.state.eqError?.localizedDescription ?? "I do not have more details")
+            CardView(cornerRadius: Constants.cardRoundedRects, content: {
+                VStack(alignment: .center, spacing: 8) {
+                    Text("Something went wrong :(")
+                        .font(.title2)
+                        .foregroundColor(.label)
+                    Text(viewStore.state.eqError?.localizedDescription ?? "I do not have more details")
+                        .font(.title3)
+                        .foregroundColor(.secondaryLabel)
+                    Button("Retry") {
+                        viewStore.send(.refresh)
+                    }
                     .font(.title3)
-                    .foregroundColor(.secondary)
-                Button("Retry") {
-                    viewStore.send(.refresh)
+                    .foregroundColor(.systemBlue)
                 }
-                .font(.title3)
-            }
+            })
+            .frame(height: Constants.erorrAndEmptyCardHeight)
+            .padding(.leading, Constants.cardPadding)
+            .padding(.trailing, Constants.cardPadding)
         case .empty:
-            HStack(alignment: .center, spacing: 8) {
+            CardView(cornerRadius: Constants.cardRoundedRects, content: {
                 Text(viewStore.emptyText)
                     .font(.title2)
-            }
+            })
+            .frame(height: Constants.erorrAndEmptyCardHeight)
+            .padding(.leading, Constants.cardPadding)
+            .padding(.trailing, Constants.cardPadding)
         case .full:
-            createFullBody(viewStore: viewStore)
+            ScrollView(.vertical) {
+                LazyVGrid(columns: gridItemLayout) {
+                    ForEach(viewStore.items, id: \.self) { item in
+                        makeCellViewFor(item, with: viewStore)
+                    }
+                }
+            }.refreshable {
+                viewStore.send(.refresh)
+            }
         }
     }
 
     @ViewBuilder
-    private func createFullBody(viewStore: ViewStore<ViewState, ViewAction>) -> some View {
-        ScrollView(.vertical) {
-            LazyVGrid(columns: gridItemLayout) {
-                ForEach(viewStore.items, id: \.self) { item in
-                    Button {
-                        viewStore.send(ViewAction.detailsClick(true))
-                    } label: {
-                        VStack(alignment: .center, spacing: 4) {
-                            AsyncImage(
-                                url: URL(string: "https://rickandmortyapi.com/api/character/avatar/1.jpeg")!,
-                                content: { image in
-                                    image.resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                },
-                                placeholder: {
-                                    ProgressView()
-                                }
-                            )
-                            Text(item.name)
-                            Text(item.origin)
-                        }
+    private func makeCellViewFor(_ item: HomePageView.CellModel, with viewStore: ViewStore<ViewState, ViewAction>) -> some View {
+        CardView(cornerRadius: Constants.cardRoundedRects) {
+            VStack(alignment: .center, spacing: 4) {
+                AsyncImage(
+                    url: URL(string: "https://rickandmortyapi.com/api/character/avatar/1.jpeg")!,
+                    content: { image in
+                        image.resizable()
+                            .cornerRadius(Constants.cardRoundedRects / 2)
+                            .aspectRatio(contentMode: .fit)
+                    },
+                    placeholder: {
+                        ProgressView()
                     }
-                }
-            }
-        }.refreshable {
-            viewStore.send(.refresh)
+                )
+                Text(item.name)
+                    .font(.headline)
+                    .foregroundColor(.label)
+                Text(item.origin)
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryLabel)
+            }.padding(16)
+        }
+        .padding(.leading, Constants.cardPadding)
+        .padding(.trailing, Constants.cardPadding)
+        .onTapGesture {
+            viewStore.send(ViewAction.detailsClick(true))
         }
     }
 
