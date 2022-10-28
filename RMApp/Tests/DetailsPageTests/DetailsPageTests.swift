@@ -27,6 +27,13 @@ final class DetailPageTests: XCTestCase {
         }
     }
 
+    func testModelConversion() {
+        let model = DetailPageView.DetailModel.init(item: RMGraphQL.charactersWithIdsMock().first)
+        XCTAssertTrue(model.name.count > 0)
+        XCTAssertTrue(model.origin.count > 0)
+        XCTAssertTrue(model.neighbours.map { $0.name }.filter { !$0.isEmpty }.count > 0)
+    }
+
 }
 
 private var mockCharactersWithIds: [RMApi.CharactersWithIdsObject] { RMGraphQL.charactersWithIdsMock() }

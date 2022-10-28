@@ -41,5 +41,26 @@ public struct LoadingView: View {
             }
         }.frame(width: 150, height: 150, alignment: .center)
     }
+
 }
 
+public struct SmallRoundedTextViewForTags: View {
+
+    var text: String
+
+    public init(text: String) {
+        self.text = text
+    }
+
+    public var body: some View {
+        Text(self.text)
+            .padding(EdgeInsets(top: 3, leading: 6, bottom: 3, trailing: 6))
+            .font(.body)
+            .foregroundColor(.label)
+            .overlay {
+                RoundedRectangle(cornerRadius: 12.5)
+                    .stroke(.primary, lineWidth: 1)
+            }
+
+    }
+}

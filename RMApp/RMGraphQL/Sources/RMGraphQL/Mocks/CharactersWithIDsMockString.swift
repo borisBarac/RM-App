@@ -14,11 +14,13 @@ public func charactersWithIdsMock() -> [RMApi.CharactersWithIdsObject] {
                         Mock(episode: [], id: "15", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "SubRick5", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
                       ])
 
+    let episodes = [Mock(characters: [], id: "1", name: "Ep1"), Mock(characters: [], id: "2", name: "Ep2"), Mock(characters: [], id: "3", name: "Ep3"), Mock(characters: [], id: "4", name: "Ep4")]
+
     return [
-        Mock(episode: [], id: "1", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick1", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
-        Mock(episode: [], id: "2", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick22", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
-        Mock(episode: [], id: "3", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick333333", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
-        Mock(episode: [], id: "4", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick444", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: episodes, id: "1", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick1", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: episodes, id: "2", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick22", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: episodes, id: "3", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick333333", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
+        Mock(episode: episodes, id: "4", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick444", origin: origin, status: "MOCKED", type: "MOCK TYPE"),
     ].map {
         CharactersWithIdsQuery.Data.Character.from($0)
     }
