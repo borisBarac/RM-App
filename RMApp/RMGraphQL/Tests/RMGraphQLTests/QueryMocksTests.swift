@@ -15,6 +15,13 @@ final class QueryMocksTests: XCTestCase {
     func testCharactersWithIdsMock() async throws {
         let mock = charactersWithIdsMock()
         XCTAssertTrue((mock.compactMap { $0.name }).count > 0)
+        XCTAssertTrue((mock.compactMap {
+            $0.origin?.residents
+        }.flatMap {
+            $0
+        }.map {
+                $0?.name
+            }).count > 0)
     }
 
 }

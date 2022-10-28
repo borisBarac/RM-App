@@ -20,10 +20,10 @@ import Api
 public func charactersPageMock(page: Int = 1) -> RMApi.CharactersPage {
     let mock = Mock(info: Mock(count: 33, next: page + 1, pages: 366, prev: nil),
                     results: [
-                        Mock(episode: [], id: "1", image: nil, name: "Rick1", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
-                        Mock(episode: [], id: "2", image: nil, name: "Rick22", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
-                        Mock(episode: [], id: "3", image: nil, name: "Rick333333", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
-                        Mock(episode: [], id: "4", image: nil, name: "Rick444", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "1", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick1", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "2", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick22", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "3", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick333333", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
+                        Mock(episode: [], id: "4", image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg", name: "Rick444", origin: nil, status: "MOCKED", type: "MOCK TYPE"),
                     ])
 
     let data = CharactersForPageQuery.Data.Characters.from(mock)
