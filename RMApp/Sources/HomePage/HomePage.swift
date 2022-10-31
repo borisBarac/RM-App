@@ -1,5 +1,6 @@
 import SwiftUI
 import ComposableArchitecture
+import DetailsPage
 import Helpers
 
 @MainActor
@@ -7,11 +8,12 @@ public struct HomePageView: View {
     struct ViewState: Equatable {
         var showLoadingIndicator: Bool
         var eqError: EquatableError?
-        var detailsPresented: Bool
+        var detailsPresentedId: Int?
         var currentPage: Int
         var emptyText = "No Ricks here so far..."
         var items: [CellModel]
 
+        var detailsPresented: Bool { detailsPresentedId != nil }
         var emptyStateText: String? { items.count > 0 ? nil : emptyText }
         var hasItems: Bool { items.count > 0 }
         var viewRenderType: ViewRenderType {
@@ -27,7 +29,7 @@ public struct HomePageView: View {
         public init(state: HomePageReducer.State) {
             showLoadingIndicator = state.loading
             eqError = state.error
-            detailsPresented = state.detailsPresented
+            detailsPresentedId = state.detailState?.id
             currentPage = state.currentPage
             items = state.getItems(page: currentPage).map {
                 CellModel(id: Int($0.id!) ?? 0,
@@ -41,7 +43,7 @@ public struct HomePageView: View {
     enum ViewAction {
         case refresh
         case loadNextPage(Int)
-        case detailsClick(Bool)
+        case detailsClick(Int?)
     }
 
     enum ViewRenderType {
@@ -85,18 +87,17 @@ public struct HomePageView: View {
             .onAppear {
                 viewStore.send(ViewAction.refresh)
             }
-            .sheet(isPresented: viewStore.binding(
-                get: \.detailsPresented,
-                send: { .detailsClick($0) })
+            .sheet(isPresented: viewStore.binding(get: \.detailsPresented,
+                                                  send: { .detailsClick(viewStore.detailsPresentedId) }()
+                                                 )
             ) {
                 IfLetStore(self.store.scope(state: \.detailState, action: HomePageReducer.Action.detail)) { store in
-                    Text("YEEEYYYYEEEYYYYE")
-                    Text("!!!!!!! !!!!!!!!!!!!!!!!")
+                    DetailPageView(store: store)
                 }
             }
             .navigationTitle("Detail Page")
             .onDisappear {
-                viewStore.send(.detailsClick(false))
+                viewStore.send(.detailsClick(nil))
             }
         }
     }
@@ -173,7 +174,7 @@ public struct HomePageView: View {
         .padding(.leading, Constants.cardPadding)
         .padding(.trailing, Constants.cardPadding)
         .onTapGesture {
-            viewStore.send(ViewAction.detailsClick(true))
+            viewStore.send(ViewAction.detailsClick(item.id))
         }
     }
 

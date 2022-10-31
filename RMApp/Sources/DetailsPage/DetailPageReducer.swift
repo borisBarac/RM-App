@@ -9,10 +9,18 @@ public struct DetailsPageReducer: ReducerProtocol, Sendable {
         public var id: Int?
         public var detailItem: GQLCharactersWithIdsObject?
         public var error: EquatableError?
-        public var isLoading: Bool = false
+        public var isLoading: Bool
 
-        public init() {
+        public init(id: Int? = nil,
+                    detailItem: GQLCharactersWithIdsObject? = nil,
+                    error: EquatableError? = nil,
+                    isLoading: Bool = false) {
+            self.id = id
+            self.detailItem = detailItem
+            self.error = error
+            self.isLoading = isLoading
         }
+
     }
 
     public enum Action: Equatable {

@@ -38,6 +38,7 @@ final class HomePageReducerTests: XCTestCase {
     }
 
     func testLoadDetailsFlow() async throws {
+        let detailId = 22
         let page = 1
         _ = await store.send(.loadData(page)) {
             $0.loading = true
@@ -45,19 +46,23 @@ final class HomePageReducerTests: XCTestCase {
 
         await receiveAndCheckPage(page, mockCharactersFor1stPage)
 
-        _ = await store.send(.setDetailsPresented(true)) {
+        _ = await store.send(.setDetailsPresented(detailId)) {
             $0.detailsPresented = true
-            $0.detailState = DetailsPageReducer.State()
+            $0.detailState = DetailsPageReducer.State(id: detailId)
         }
-        #warning("FIX ME")
-//        _ = await store.send(.detail(.doSomething(mockCharactersPage.characters.first!.name ?? ""))) {
-//            $0.detailState?.details = mockCharactersPage.characters.first!.name
-//        }
+
+        _ = await store.send(.detail(.loadWithId(detailId))) {
+            $0.detailState?.id = detailId
+            $0.detailState?.isLoading = true
+            $0.detailState?.detailItem = nil
+            $0.detailState?.error = nil
+        }
         _ = await store.send(.detail(.loadEmpty))
 
-        _ = await store.send(.setDetailsPresented(false)) {
+        _ = await store.send(.setDetailsPresented(nil)) {
             $0.detailsPresented = false
             $0.detailState = nil
+            $0.detailState?.isLoading = false
         }
     }
 
@@ -93,3 +98,4 @@ final class HomePageReducerTests: XCTestCase {
 
 private var mockCharactersFor1stPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 1) }
 private var mockCharactersFor2ndPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 2) }
+private var mockCharactersWithIds: [RMApi.CharactersWithIdsObject] { RMGraphQL.charactersWithIdsMock() }

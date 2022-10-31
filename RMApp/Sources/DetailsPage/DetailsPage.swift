@@ -46,6 +46,7 @@ public struct DetailPageView: View {
             let name: String
             let image: String?
         }
+        let id: Int
         let name: String
         let status: String
         let image: String?
@@ -103,7 +104,11 @@ public struct DetailPageView: View {
                     makeDetailViewFor(viewStore.state.item, with: viewStore)
                 }
             }.onAppear {
-                viewStore.send(.loadDetailsWithId(2))
+                if isRunningInPreview {
+                    viewStore.send(.loadDetailsWithId(2))
+                } else {
+                    viewStore.send(.loadDetailsWithId(viewStore.item.id))
+                }
             }
         }
     }
@@ -113,10 +118,10 @@ public struct DetailPageView: View {
     private func makeDetailViewFor(_ item: DetailModel, with viewStore: ViewStore<ViewState, ViewAction>) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: Constants.stackSpacing * 2) {
+                Spacer(minLength: 8)
                 Capsule(style: .circular)
                     .frame(width: 40)
                     .foregroundColor(Color.systemFill)
-                    .shadowWithNeumorphismStyle()
                 CardView(cornerRadius: Constants.cardRoundedRects) {
                     VStack(alignment: .center, spacing: Constants.stackSpacing * 1.5) {
                         AsyncImage(
@@ -182,7 +187,6 @@ public struct DetailPageView: View {
                 .padding(.leading, Constants.cardPadding)
                 .padding(.trailing, Constants.cardPadding)
 
-
             }
         }
 
@@ -207,6 +211,7 @@ extension DetailPageView.DetailModel {
             return DetailPageView.DetailModel.Neighbour(id: intId ?? -1, name: resident.name ?? "", image: resident.image)
         } ?? []
 
+        self.id = Int(item?.id ?? "") ?? -1
         self.name = item?.name ?? ""
         self.status = item?.status ?? ""
         self.image = item?.image
@@ -219,7 +224,9 @@ extension DetailPageView.DetailModel {
 #if DEBUG
 struct DetailPageView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailPageView(store: DetailPageView.DetailPageStore.init(initialState: DetailsPageReducer.State(), reducer: DetailsPageReducer()))
+            DetailPageView(store: DetailPageView.DetailPageStore.init(initialState: DetailsPageReducer.State(),
+                                                                      reducer: DetailsPageReducer()))
+
     }
 }
 #endif

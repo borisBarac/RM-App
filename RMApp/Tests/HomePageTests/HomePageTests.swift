@@ -14,6 +14,7 @@ final class HomePageTests: XCTestCase {
                                                                 action: HomePageReducer.Action.init)
 
         var page = 1
+        let detailsId = 22
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
             return mockCharactersFor1stPage
         }
@@ -23,11 +24,11 @@ final class HomePageTests: XCTestCase {
         }
         await receiveAndCheckPage(store, page, mockCharactersFor1stPage)
 
-        _ = await store.send(.detailsClick(true)) { state in
-            state.detailsPresented = true
+        _ = await store.send(.detailsClick(detailsId)) { state in
+            state.detailsPresentedId = detailsId
         }
-        _ = await store.send(.detailsClick(false)) { state in
-            state.detailsPresented = false
+        _ = await store.send(.detailsClick(nil)) { state in
+            state.detailsPresentedId = nil
         }
 
         page = 2

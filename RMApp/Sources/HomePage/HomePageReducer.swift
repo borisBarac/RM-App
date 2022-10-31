@@ -37,7 +37,7 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
         case loadData(Int)
         case dataLoaded(TaskResult<GQLChactersPage>)
         case detail(DetailsPageReducer.Action)
-        case setDetailsPresented(Bool)
+        case setDetailsPresented(Int?)
         case showError(EquatableError)
     }
 
@@ -86,9 +86,10 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 state.loading = false
                 return .none
 
-            case .setDetailsPresented(let presented):
+            case .setDetailsPresented(let presentedId):
+                let presented = presentedId != nil
                 state.detailsPresented = presented
-                state.detailState = presented ? DetailsPageReducer.State() : nil
+                state.detailState = presented ? DetailsPageReducer.State(id: presentedId) : nil
                 return .none
 
             case .detail:
