@@ -15,7 +15,6 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     public struct State: Equatable {
         // for some reason on API page 0 and page 1 are the same
         public var currentPage: Int = 0
-        public var totalNumberOfPages: Int = 0
 
         public var itemPageDict = [Int: [ItemsType]]()
         public var loading: Bool = false
@@ -54,7 +53,8 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 state.error = nil
                 // used for refresh
                 if page == 0 {
-                    state.itemPageDict.removeAll()
+                    state.itemPageDict = [Int: [ItemsType]]()
+                    state.currentPage = 0
                 }
                 return .task(priority: .userInitiated) {
                     .dataLoaded(

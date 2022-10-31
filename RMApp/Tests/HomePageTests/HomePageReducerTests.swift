@@ -19,6 +19,10 @@ final class HomePageReducerTests: XCTestCase {
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
             return mockCharactersFor1stPage
         }
+
+        store.dependencies.rmCharacterService.fetchCharactersWithIds = { _ in
+            return mockCharactersWithIds
+        }
     }
 
     func testSendError() async throws {
@@ -57,7 +61,12 @@ final class HomePageReducerTests: XCTestCase {
             $0.detailState?.detailItem = nil
             $0.detailState?.error = nil
         }
-        _ = await store.send(.detail(.loadEmpty))
+
+        _ = await store.receive(.detail(.dataLoaded(.success(mockCharactersWithIds)))) {
+            $0.detailState?.isLoading = false
+            $0.detailState?.error = nil
+            $0.detailState?.detailItem = mockCharactersWithIds.first
+        }
 
         _ = await store.send(.setDetailsPresented(nil)) {
             $0.detailsPresented = false
@@ -83,6 +92,20 @@ final class HomePageReducerTests: XCTestCase {
         }
 
         await receiveAndCheckPage(page, mockCharactersFor2ndPage)
+    }
+
+    func testRefresh() async throws {
+        var page = 1
+        _ = await store.send(.loadData(page)) {
+            $0.loading = true
+        }
+        await receiveAndCheckPage(page, mockCharactersFor1stPage)
+
+        _ = await store.send(.loadData(0)) {
+            $0.loading = true
+            $0.currentPage = 0
+            $0.itemPageDict = [Int: [HomePageReducer.ItemsType]]()
+        }
     }
 
     fileprivate func receiveAndCheckPage(_ page: Int,
