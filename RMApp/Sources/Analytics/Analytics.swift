@@ -34,14 +34,14 @@ public class AnalyticsService {
         let eventType: EventType
         let eventSeverity: EventSeverity
         let message: String
-        let attachment: Codable?
+        let attachment: Encodable?
         let file: String
         let line: Int
 
         public init(eventType: AnalyticsService.EventType,
                     eventSeverity: AnalyticsService.EventSeverity,
                     message: String,
-                    attachment: Codable? = nil,
+                    attachment: Encodable? = nil,
                     file: String = #file,
                     line: Int = #line) {
             self.eventType = eventType
@@ -80,7 +80,7 @@ extension AnalyticsService.Event {
         return encoder
     }()
 
-    static func endcode(attachment: Codable) throws -> String? {
+    static func endcode(attachment: Encodable) throws -> String? {
         do {
             let data = try jsonEncoder.encode(attachment)
             return String(data: data, encoding: .utf8)
@@ -126,7 +126,7 @@ extension AnalyticsService: DependencyKey {
 }
 
 extension DependencyValues {
-  public var rmCharacterService: AnalyticsService {
+  public var analyticsService: AnalyticsService {
     get { self[AnalyticsService.self] }
     set { self[AnalyticsService.self] = newValue }
   }
