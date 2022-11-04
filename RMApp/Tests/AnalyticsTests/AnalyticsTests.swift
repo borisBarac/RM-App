@@ -27,6 +27,7 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertNotNil(loggedEvent)
         XCTAssertNotNil(loggedEvent?.encodedAttachment)
         XCTAssertNotEqual(loggedEvent?.encodedAttachment, "ENCODING ERROR")
+        XCTAssertTrue(CallBackTest.called)
 
     }
 }
