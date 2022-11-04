@@ -6,9 +6,10 @@ import PackageDescription
 let TCA: Target.Dependency = .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
 let services: Target.Dependency = "Services"
 let helpers: Target.Dependency = "Helpers"
+let analytics: Target.Dependency = "Analytics"
 let rmGql: Target.Dependency = .product(name: "RMGraphQL", package: "RMGraphQL")
 
-let pageDependecies: [Target.Dependency] = [TCA, services, helpers,]
+let pageDependecies: [Target.Dependency] = [TCA, services, helpers, analytics,]
 
 let package = Package(
     name: "RMApp",
@@ -25,6 +26,7 @@ let package = Package(
         .library(name: "AppCore", targets: ["AppCore"]),
         .library(name: "Services", targets: ["Services"]),
         .library(name: "Helpers", targets: ["Helpers"]),
+        .library(name: "Analytics", targets: ["Analytics"]),
         .library(name: "HomePage", targets: ["HomePage"]),
         .library(name: "DetailsPage", targets: ["DetailsPage"]),
     ],
@@ -38,6 +40,7 @@ let package = Package(
             dependencies: [
                 TCA,
                 helpers,
+                analytics,
             ]),
         .testTarget(
             name: "AppCoreTests",
@@ -62,6 +65,15 @@ let package = Package(
         .testTarget(
             name: "HelpersTests",
             dependencies: ["Helpers"]),
+
+        .target(
+                name: "Analytics",
+                dependencies: [
+                    TCA,
+                ]),
+        .testTarget(
+            name: "AnalyticsTests",
+            dependencies: ["Analytics"]),
 
         .target(
             name: "HomePage",
