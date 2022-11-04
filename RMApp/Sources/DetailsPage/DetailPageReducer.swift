@@ -2,7 +2,7 @@ import SwiftUI
 import ComposableArchitecture
 import Helpers
 import Services
-
+import Analytics
 
 public struct DetailsPageReducer: ReducerProtocol, Sendable {
     public struct State: Equatable {
@@ -31,6 +31,7 @@ public struct DetailsPageReducer: ReducerProtocol, Sendable {
     }
 
     @Dependency(\.rmCharacterService) var rmCharacterService
+    @Dependency(\.analyticsService) var analyticsService
 
     public init() {
     }
@@ -73,4 +74,27 @@ public struct DetailsPageReducer: ReducerProtocol, Sendable {
         }
     }
 
+
+    func logEventFor(action: Action) {
+        if let event = action.analyticsEvent {
+            analyticsService.log(event: event)
+        }
+    }
+}
+
+private typealias Event = AnalyticsService.Event
+fileprivate extension DetailsPageReducer.Action {
+    var analyticsEvent: Event? {
+        switch self {
+        case .loadWithId(let page):
+            return Event(eventType: .info, eventSeverity: .normal, message: "DetailPage: LoadData for \(page) page")
+        case .dataLoaded(.failure(let error)):
+            return Event(eventType: .error, eventSeverity: .critical, message: "DetailPage could not load data", attachment: (error as? AppError))
+        case .dataLoaded(.success(let items)):
+            return Event(eventType: .info, eventSeverity: .normal, message: "DetailPage: LoadData for \(items.first?.name ?? "NO NAME") page")
+
+        default:
+            return nil
+        }
+    }
 }

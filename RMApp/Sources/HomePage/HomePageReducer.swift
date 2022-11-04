@@ -3,6 +3,7 @@ import SwiftUI
 import Services
 import Helpers
 import DetailsPage
+import Analytics
 
 // this is gonna die when we refactor to type that supports pagination
 import RMGraphQL
@@ -41,12 +42,16 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     }
 
     @Dependency(\.rmCharacterService) var rmCharacterService
+    @Dependency(\.analyticsService) var analyticsService
 
     public init() {
     }
 
     public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
+            defer {
+                self.logEventFor(action: action)
+            }
             switch action {
             case .loadData(let page):
                 state.loading = true
@@ -97,6 +102,29 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
             }
         }.ifLet(\.detailState, action: /Action.detail) {
             DetailsPageReducer()
+        }
+    }
+
+    func logEventFor(action: Action) {
+        if let event = action.analyticsEvent {
+            analyticsService.log(event: event)
+        }
+    }
+}
+
+private typealias Event = AnalyticsService.Event
+fileprivate extension HomePageReducer.Action {
+    var analyticsEvent: Event? {
+        switch self {
+        case .loadData(let page):
+            return Event(eventType: .info, eventSeverity: .normal, message: "HomePage: LoadData for \(page) page")
+        case .setDetailsPresented(let detailsId):
+            return Event(eventType: .info, eventSeverity: .normal, message: "HomePage: show details with \(String(describing: detailsId))")
+        case .dataLoaded(.failure(let error)):
+            return Event(eventType: .error, eventSeverity: .critical, message: "HomePage could not load data", attachment: (error as? AppError))
+
+        default:
+            return nil
         }
     }
 }
