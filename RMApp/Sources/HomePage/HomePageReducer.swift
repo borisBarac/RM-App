@@ -50,7 +50,8 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     public var body: some ReducerProtocol<State, Action> {
         Reduce { state, action in
             defer {
-                self.logEventFor(action: action)
+                EventLogging(event: action.analyticsEvent,
+                             analyticsService: analyticsService).log()
             }
             switch action {
             case .loadData(let page):
@@ -112,16 +113,15 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
     }
 }
 
-private typealias Event = AnalyticsService.Event
-fileprivate extension HomePageReducer.Action {
-    var analyticsEvent: Event? {
+extension HomePageReducer.Action: Eventable {
+    public var analyticsEvent: AnalyticsService.Event? {
         switch self {
         case .loadData(let page):
-            return Event(eventType: .info, eventSeverity: .normal, message: "HomePage: LoadData for \(page) page")
+            return AnalyticsService.Event(eventType: .info, eventSeverity: .normal, message: "HomePage: LoadData for \(page) page")
         case .setDetailsPresented(let detailsId):
-            return Event(eventType: .info, eventSeverity: .normal, message: "HomePage: show details with \(String(describing: detailsId))")
+            return AnalyticsService.Event(eventType: .info, eventSeverity: .normal, message: "HomePage: show details with \(String(describing: detailsId))")
         case .dataLoaded(.failure(let error)):
-            return Event(eventType: .error, eventSeverity: .critical, message: "HomePage could not load data", attachment: (error as? AppError))
+            return AnalyticsService.Event(eventType: .error, eventSeverity: .critical, message: "HomePage could not load data", attachment: (error as? AppError))
 
         default:
             return nil
