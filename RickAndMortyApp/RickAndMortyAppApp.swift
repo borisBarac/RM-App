@@ -1,3 +1,6 @@
+
+// we need this because xcode likes to be xcode
+@_implementationOnly
 import AppCore
 import SwiftUI
 
