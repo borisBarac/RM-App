@@ -153,17 +153,7 @@ public struct HomePageView: View {
         CardView(cornerRadius: Constants.cardRoundedRects) {
             LazyVStack(alignment: .center, spacing: 4) {
                 if let imageUrl = URL(string: item.url) {
-                    AsyncImage(
-                        url: imageUrl,
-                        content: { image in
-                            image.resizable()
-                                .cornerRadius(Constants.cardRoundedRects / 2)
-                                .aspectRatio(contentMode: .fit)
-                        },
-                        placeholder: {
-                            ProgressView()
-                        }
-                    )
+                    RMImage(url: imageUrl)
                 }
                 Text(item.name)
                     .font(.headline)

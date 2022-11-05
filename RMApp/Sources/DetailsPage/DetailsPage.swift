@@ -124,17 +124,9 @@ public struct DetailPageView: View {
                     .foregroundColor(Color.systemFill)
                 CardView(cornerRadius: Constants.cardRoundedRects) {
                     VStack(alignment: .center, spacing: Constants.stackSpacing * 1.5) {
-                        AsyncImage(
-                            url: URL(string: item.image!)!,
-                            content: { image in
-                                image.resizable()
-                                    .cornerRadius(Constants.cardRoundedRects / 2)
-                                    .aspectRatio(contentMode: .fit)
-                            },
-                            placeholder: {
-                                ProgressView()
-                            }
-                        )
+                        if let imageUrl = URL(string: item.image ?? "") {
+                            RMImage(url: imageUrl)
+                        }
                         Text(item.name)
                             .font(.headline)
                             .foregroundColor(.label)
@@ -160,20 +152,7 @@ public struct DetailPageView: View {
                                 ScrollView(.horizontal) {
                                     HStack {
                                         ForEach(item.neighboursImageUrls, id: \.self) { url in
-                                            AsyncImage(
-                                                url: url,
-                                                content: { image in
-                                                    image.resizable()
-                                                        .cornerRadius(Constants.cardRoundedRects / 2)
-                                                        .aspectRatio(contentMode: .fit)
-                                                        .frame(width: Constants.neighbourImageLengts,
-                                                               height: Constants.neighbourImageLengts,
-                                                               alignment: .center)
-                                                },
-                                                placeholder: {
-                                                    ProgressView()
-                                                }
-                                            )
+                                            RMImage(url: url)
                                             .padding(.leading, Constants.cardPadding)
                                             .padding(.trailing, Constants.cardPadding)
                                         }

@@ -9,6 +9,7 @@ let helpers: Target.Dependency = "Helpers"
 let analytics: Target.Dependency = "Analytics"
 let rmGql: Target.Dependency = .product(name: "RMGraphQL", package: "RMGraphQL")
 let snapShotTesting: Target.Dependency = .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+let sdWebImage: Target.Dependency = .product(name: "SDWebImageSwiftUI", package: "SDWebImageSwiftUI")
 
 let pageDependecies: [Target.Dependency] = [TCA, services, helpers, analytics,]
 
@@ -33,6 +34,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "RMGraphQL", path: "./RMGraphQL"),
+        .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "2.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .upToNextMajor(from: "1.10.0")),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.43.0")),
     ],
@@ -61,6 +63,7 @@ let package = Package(
             name: "Helpers",
             dependencies: [
                 rmGql,
+                sdWebImage
             ]),
         .testTarget(
             name: "HelpersTests",

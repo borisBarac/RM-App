@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 // ---------------------------------------
 // if the project was bigger and more complex this should be a separate library in the RMApp Package
@@ -62,5 +63,21 @@ public struct SmallRoundedTextViewForTags: View {
                     .stroke(.primary, lineWidth: 1)
             }
 
+    }
+}
+
+public struct RMImage: View {
+    var url: URL
+
+    public init(url: URL) {
+        self.url = url
+    }
+
+    public var body: some View {
+        WebImage(url: url)
+            .resizable()
+            .indicator(.activity)
+            .transition(.fade(duration: 0.5))
+            .scaledToFit()
     }
 }
