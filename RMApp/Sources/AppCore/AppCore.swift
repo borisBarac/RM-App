@@ -1,15 +1,13 @@
 import SwiftUI
+import HomePage
 
 public struct AppCoreView: View {
     public init() {
     }
 
     public var body: some View {
-        VStack {
-            Text("Hello, world!")
-            Text("Hello, Hello, Hello!!!")
-        }
-        .padding()
+        HomePageView(store: HomePageView.HomePageStore(initialState: HomePageReducer.State(),
+                                                       reducer: HomePageReducer()))
     }
 }
 

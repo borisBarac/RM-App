@@ -40,9 +40,7 @@ let package = Package(
         .target(
             name: "AppCore",
             dependencies: [
-                TCA,
-                helpers,
-                analytics,
+                "HomePage",
             ]),
         .testTarget(
             name: "AppCoreTests",
