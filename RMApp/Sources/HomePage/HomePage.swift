@@ -92,13 +92,12 @@ public struct HomePageView: View {
                                                  )
             ) {
                 IfLetStore(self.store.scope(state: \.detailState, action: HomePageReducer.Action.detail)) { store in
-                    DetailPageView(store: store)
+                    DetailPageView(store: store).onDisappear {
+                        viewStore.send(.detailsClick(nil))
+                    }
                 }
             }
             .navigationTitle("Detail Page")
-            .onDisappear {
-                viewStore.send(.detailsClick(nil))
-            }
         }
     }
 
