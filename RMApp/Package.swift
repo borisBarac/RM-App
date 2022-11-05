@@ -66,7 +66,8 @@ let package = Package(
             ]),
         .testTarget(
             name: "HelpersTests",
-            dependencies: ["Helpers"]),
+            dependencies: ["Helpers",
+                           snapShotTesting]),
 
         .target(
                 name: "Analytics",
