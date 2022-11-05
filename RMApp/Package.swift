@@ -8,6 +8,7 @@ let services: Target.Dependency = "Services"
 let helpers: Target.Dependency = "Helpers"
 let analytics: Target.Dependency = "Analytics"
 let rmGql: Target.Dependency = .product(name: "RMGraphQL", package: "RMGraphQL")
+let snapShotTesting: Target.Dependency = .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
 
 let pageDependecies: [Target.Dependency] = [TCA, services, helpers, analytics,]
 
@@ -31,8 +32,9 @@ let package = Package(
         .library(name: "DetailsPage", targets: ["DetailsPage"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.43.0")),
         .package(name: "RMGraphQL", path: "./RMGraphQL"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", .upToNextMajor(from: "1.10.0")),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.43.0")),
     ],
     targets: [
         .target(
@@ -83,7 +85,8 @@ let package = Package(
                 ]),
         .testTarget(
             name: "HomePageTests",
-            dependencies: ["HomePage"]),
+            dependencies: ["HomePage",
+                           snapShotTesting]),
 
         .target(
             name: "DetailsPage",
@@ -91,7 +94,8 @@ let package = Package(
                 pageDependecies),
         .testTarget(
             name: "DetailsPageTests",
-            dependencies: ["DetailsPage"]),
+            dependencies: ["DetailsPage",
+                           snapShotTesting]),
 
         
     ]
