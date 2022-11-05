@@ -31,6 +31,10 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
             itemPageDict[page] ?? []
         }
 
+        func getItemsForAllPages() -> [ItemsType] {
+            itemPageDict.values.reversed().flatMap { $0 }
+        }
+
     }
 
     public enum Action: Equatable {

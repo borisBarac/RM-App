@@ -10,12 +10,21 @@ public struct HomePageView: View {
         var eqError: EquatableError?
         var detailsPresentedId: Int?
         var currentPage: Int
+        var numberOfItemsPerPage: Int = 20
         var emptyText = "No Ricks here so far..."
         var items: [CellModel]
 
         var detailsPresented: Bool { detailsPresentedId != nil }
         var emptyStateText: String? { items.count > 0 ? nil : emptyText }
         var hasItems: Bool { items.count > 0 }
+        var scrollOfsetIndex: Int {
+            let scrollIndex = 20 * (currentPage - 1)
+            guard hasItems, scrollIndex < items.count, scrollIndex > 0 else {
+                return 0
+            }
+
+            return scrollIndex
+        }
         var viewRenderType: ViewRenderType {
             guard showLoadingIndicator == false else {
                 return .loading
@@ -31,7 +40,7 @@ public struct HomePageView: View {
             eqError = state.error
             detailsPresentedId = state.detailState?.id
             currentPage = state.currentPage
-            items = state.getItems(page: currentPage).map {
+            items = state.getItemsForAllPages().map {
                 CellModel(id: Int($0.id!) ?? 0,
                           name: $0.name ?? "",
                           url: $0.image ?? "",
@@ -135,14 +144,23 @@ public struct HomePageView: View {
             .padding(.leading, Constants.cardPadding)
             .padding(.trailing, Constants.cardPadding)
         case .full:
-            ScrollView(.vertical) {
-                LazyVGrid(columns: gridItemLayout) {
-                    ForEach(viewStore.items, id: \.self) { item in
-                        makeCellViewFor(item, with: viewStore)
+            ScrollViewReader { proxy in
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: gridItemLayout) {
+                        ForEach(viewStore.items, id: \.self) { item in
+                            makeCellViewFor(item, with: viewStore)
+                        }
+                        Color(.clear).onAppear {
+                            viewStore.send(.loadNextPage(viewStore.currentPage + 1))
+                        }
                     }
+                }.onAppear {
+                    withAnimation {
+                        proxy.scrollTo(viewStore.items[viewStore.scrollOfsetIndex], anchor: .top)
+                    }
+                }.refreshable {
+                    viewStore.send(.refresh)
                 }
-            }.refreshable {
-                viewStore.send(.refresh)
             }
         }
     }

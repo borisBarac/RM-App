@@ -21,7 +21,6 @@ final class HomePageTests: XCTestCase {
     }
 
     func testDetailPageFlow() async throws {
-        let page = 1
         let detailsId = 22
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
             return mockCharactersFor1stPage
@@ -34,7 +33,8 @@ final class HomePageTests: XCTestCase {
         _ = await store.send(.refresh) { state in
             state.showLoadingIndicator = true
         }
-        await receiveAndCheckPage(store, page, mockCharactersFor1stPage)
+
+        await reveiveAndCheck1stPage()
 
         _ = await store.send(.detailsClick(detailsId)) { state in
             state.detailsPresentedId = detailsId
@@ -58,7 +58,8 @@ final class HomePageTests: XCTestCase {
         _ = await store.send(.refresh) { state in
             state.showLoadingIndicator = true
         }
-        await receiveAndCheckPage(store, page, mockCharactersFor1stPage)
+
+        await reveiveAndCheck1stPage()
 
         page = 2
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
@@ -68,17 +69,10 @@ final class HomePageTests: XCTestCase {
         _ = await store.send(.loadNextPage(page)) { state in
             state.showLoadingIndicator = true
         }
-        await receiveAndCheckPage(store, page, mockCharactersFor2ndPage)
-    }
 
-}
-
-extension HomePageTests {
-    fileprivate func receiveAndCheckPage(_ store: TestStore<HomePageReducer.State, HomePageReducer.Action, HomePageView.ViewState, HomePageView.ViewAction, ()>,
-                                         _ page: Int,
-                                         _ mockCharactersForPage: RMApi.CharactersPage) async {
-        _ = await store.receive(.dataLoaded(.success(mockCharactersForPage))) { state in
-            state.items = mockCharactersForPage.characters.map {
+        _ = await store.receive(.dataLoaded(.success(mockCharactersFor2ndPage))) { state in
+            let characters = mockCharactersFor1stPage.characters + mockCharactersFor2ndPage.characters
+            state.items = characters.map {
                 HomePageView.CellModel(id: Int($0.id!) ?? 0,
                           name: $0.name ?? "",
                           url: "",
@@ -88,6 +82,22 @@ extension HomePageTests {
             state.currentPage = page
         }
     }
+}
+
+extension HomePageTests {
+    fileprivate func reveiveAndCheck1stPage() async {
+        _ = await store.receive(.dataLoaded(.success(mockCharactersFor1stPage))) { state in
+            state.items = mockCharactersFor1stPage.characters.map {
+                HomePageView.CellModel(id: Int($0.id!) ?? 0,
+                                       name: $0.name ?? "",
+                                       url: "",
+                                       origin: $0.origin?.name ?? "We do not know")
+            }
+            state.showLoadingIndicator = false
+            state.currentPage = 1
+        }
+    }
+
 }
 
 private var mockCharactersFor1stPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }
