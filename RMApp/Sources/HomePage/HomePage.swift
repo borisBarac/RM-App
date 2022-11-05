@@ -34,7 +34,7 @@ public struct HomePageView: View {
             items = state.getItems(page: currentPage).map {
                 CellModel(id: Int($0.id!) ?? 0,
                           name: $0.name ?? "",
-                          url: "",
+                          url: $0.image ?? "",
                           origin: $0.origin?.name ?? "We do not know")
             }
         }
@@ -152,17 +152,19 @@ public struct HomePageView: View {
     private func makeCellViewFor(_ item: HomePageView.CellModel, with viewStore: ViewStore<ViewState, ViewAction>) -> some View {
         CardView(cornerRadius: Constants.cardRoundedRects) {
             VStack(alignment: .center, spacing: 4) {
-                AsyncImage(
-                    url: URL(string: "https://rickandmortyapi.com/api/character/avatar/1.jpeg")!,
-                    content: { image in
-                        image.resizable()
-                            .cornerRadius(Constants.cardRoundedRects / 2)
-                            .aspectRatio(contentMode: .fit)
-                    },
-                    placeholder: {
-                        ProgressView()
-                    }
-                )
+                if let imageUrl = URL(string: item.url) {
+                    AsyncImage(
+                        url: imageUrl,
+                        content: { image in
+                            image.resizable()
+                                .cornerRadius(Constants.cardRoundedRects / 2)
+                                .aspectRatio(contentMode: .fit)
+                        },
+                        placeholder: {
+                            ProgressView()
+                        }
+                    )
+                }
                 Text(item.name)
                     .font(.headline)
                     .foregroundColor(.label)
