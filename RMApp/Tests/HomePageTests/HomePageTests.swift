@@ -8,15 +8,27 @@ import XCTest
 
 @MainActor
 final class HomePageTests: XCTestCase {
-    func testMainFlow() async throws {
-        let store = TestStore(initialState: HomePageReducer.State(),
-                              reducer: HomePageReducer()).scope(state: HomePageView.ViewState.init,
-                                                                action: HomePageReducer.Action.init)
 
-        var page = 1
+    var store = TestStore(initialState: HomePageReducer.State(),
+                          reducer: HomePageReducer()).scope(state: HomePageView.ViewState.init,
+                                                            action: HomePageReducer.Action.init)
+
+    override func setUp() async throws {
+        try await super.setUp()
+        store = TestStore(initialState: HomePageReducer.State(),
+                          reducer: HomePageReducer()).scope(state: HomePageView.ViewState.init,
+                                                            action: HomePageReducer.Action.init)
+    }
+
+    func testDetailPageFlow() async throws {
+        let page = 1
         let detailsId = 22
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
             return mockCharactersFor1stPage
+        }
+
+        store.dependencies.rmCharacterService.fetchCharactersWithIds = { _ in
+            return mockCharactersWithIds
         }
 
         _ = await store.send(.refresh) { state in
@@ -27,9 +39,26 @@ final class HomePageTests: XCTestCase {
         _ = await store.send(.detailsClick(detailsId)) { state in
             state.detailsPresentedId = detailsId
         }
+
+        await store.receive(.detail(.loadWithId(detailsId)))
+
+        await store.receive(.detail(.dataLoaded(.success(mockCharactersWithIds))))
+
         _ = await store.send(.detailsClick(nil)) { state in
             state.detailsPresentedId = nil
         }
+    }
+
+    func testLoadingPages() async throws {
+        var page = 1
+        store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
+            return mockCharactersFor1stPage
+        }
+
+        _ = await store.send(.refresh) { state in
+            state.showLoadingIndicator = true
+        }
+        await receiveAndCheckPage(store, page, mockCharactersFor1stPage)
 
         page = 2
         store.dependencies.rmCharacterService.fetchCharactersForPage = { _ in
@@ -42,6 +71,9 @@ final class HomePageTests: XCTestCase {
         await receiveAndCheckPage(store, page, mockCharactersFor2ndPage)
     }
 
+}
+
+extension HomePageTests {
     fileprivate func receiveAndCheckPage(_ store: TestStore<HomePageReducer.State, HomePageReducer.Action, HomePageView.ViewState, HomePageView.ViewAction, ()>,
                                          _ page: Int,
                                          _ mockCharactersForPage: RMApi.CharactersPage) async {
@@ -60,3 +92,4 @@ final class HomePageTests: XCTestCase {
 
 private var mockCharactersFor1stPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock() }
 private var mockCharactersFor2ndPage: RMApi.CharactersPage { RMGraphQL.charactersPageMock(page: 2) }
+private var mockCharactersWithIds: [RMApi.CharactersWithIdsObject] { RMGraphQL.charactersWithIdsMock() }

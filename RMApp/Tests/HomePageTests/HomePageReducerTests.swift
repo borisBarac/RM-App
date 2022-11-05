@@ -55,7 +55,7 @@ final class HomePageReducerTests: XCTestCase {
             $0.detailState = DetailsPageReducer.State(id: detailId)
         }
 
-        _ = await store.send(.detail(.loadWithId(detailId))) {
+        _ = await store.receive(.detail(.loadWithId(detailId))) {
             $0.detailState?.id = detailId
             $0.detailState?.isLoading = true
             $0.detailState?.detailItem = nil
