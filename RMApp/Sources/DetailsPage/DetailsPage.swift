@@ -107,7 +107,7 @@ public struct DetailPageView: View {
                 if isRunningInPreview {
                     viewStore.send(.loadDetailsWithId(2))
                 } else {
-                    viewStore.send(.loadDetailsWithId(viewStore.item.id))
+                    // load is gonna get called from the HomePage reducer
                 }
             }
         }

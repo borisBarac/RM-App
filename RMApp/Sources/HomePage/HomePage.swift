@@ -151,7 +151,7 @@ public struct HomePageView: View {
     @ViewBuilder
     private func makeCellViewFor(_ item: HomePageView.CellModel, with viewStore: ViewStore<ViewState, ViewAction>) -> some View {
         CardView(cornerRadius: Constants.cardRoundedRects) {
-            VStack(alignment: .center, spacing: 4) {
+            LazyVStack(alignment: .center, spacing: 4) {
                 if let imageUrl = URL(string: item.url) {
                     AsyncImage(
                         url: imageUrl,

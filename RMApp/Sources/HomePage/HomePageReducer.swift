@@ -96,7 +96,7 @@ public struct HomePageReducer: ReducerProtocol, Sendable {
                 let presented = presentedId != nil
                 state.detailsPresented = presented
                 state.detailState = presented ? DetailsPageReducer.State(id: presentedId) : nil
-                return .none
+                return presentedId == nil ? .none : Effect(value: .detail(.loadWithId(presentedId!)))
 
             case .detail:
                 return .none
