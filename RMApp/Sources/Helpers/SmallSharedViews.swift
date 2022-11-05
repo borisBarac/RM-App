@@ -79,5 +79,8 @@ public struct RMImage: View {
             .indicator(.activity)
             .transition(.fade(duration: 0.5))
             .scaledToFit()
+            .clipped()
+            .cornerRadius(12.5)
+            .shadow(color: Color.primary, radius: 2.5, x: 0, y: 0)
     }
 }

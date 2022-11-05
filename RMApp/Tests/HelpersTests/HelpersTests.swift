@@ -11,14 +11,23 @@ import XCTest
 
 #if os(iOS)
 final class HelpersTests: XCTestCase {
+
+    override func setUp() async throws {
+        try await super.setUp()
+//        isRecording = true
+    }
+
     func testLoadingViewImage() throws {
         let vc = UIHostingController(rootView: LoadingView())
-        assertSnapshot(matching: vc, as: .image(size: CGSize(width: 250, height: 250)))
+        assertSnapshot(matching: vc, as: .image(size: CGSize(width: 250, height: 250),
+                                                traits: .init(userInterfaceStyle: .dark)))
     }
 
     func testTagText() throws {
         let vc = UIHostingController(rootView: SmallRoundedTextViewForTags(text: "TAG TEXT GOES HERE"))
-        assertSnapshot(matching: vc, as: .image(size: CGSize(width: 100, height: 30)))
+        vc.overrideUserInterfaceStyle = .dark
+        assertSnapshot(matching: vc, as: .image(size: CGSize(width: 100, height: 30),
+                                                traits: .init(userInterfaceStyle: .dark)))
     }
 
 }

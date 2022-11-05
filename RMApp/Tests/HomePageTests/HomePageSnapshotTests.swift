@@ -34,13 +34,15 @@ final class HomePageSnapshotTests: XCTestCase {
 
         _ = await store.send(.loadData(page),
                              view: HomePageView.init(store: ),
-                             as: .image(layout: .device(config: .iPhone13))) {
+                             as: .image(layout: .device(config: .iPhone13),
+                                        traits: .init(userInterfaceStyle: .dark))) {
             $0.loading = true
         }
 
         _ = await store.receive(.dataLoaded(.success(mockCharactersFor1stPage)),
                                 view: HomePageView.init(store: ),
-                                as: .image(layout: .device(config: .iPhone13))) {
+                                as: .image(layout: .device(config: .iPhone13),
+                                           traits: .init(userInterfaceStyle: .dark))) {
             $0.itemPageDict[page] = mockCharactersFor1stPage.characters
             $0.loading = false
             $0.currentPage = page
