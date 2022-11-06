@@ -11,6 +11,7 @@ import XCTestDynamicOverlay
 // we would need to define types that we gonna use here and map to them from the network types
 // good thing about graphQl is that we define the BE model of the data
 public typealias GQLChactersPage = RMApi.CharactersPage
+public typealias GQLChactersPageObject = RMApi.CharacterPageObject
 public typealias GQLCharactersWithIdsObject = RMApi.CharactersWithIdsObject
 
 public class RMCharacterService {

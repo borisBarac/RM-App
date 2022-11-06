@@ -5,13 +5,8 @@ import Helpers
 import DetailsPage
 import Analytics
 
-// this is gonna die when we refactor to type that supports pagination
-import RMGraphQL
-
 public struct HomePageReducer: ReducerProtocol, Sendable {
-
-    // needs a refactor to pagination model
-    public typealias ItemsType = RMApi.CharacterPageObject
+    public typealias ItemsType = GQLChactersPageObject
 
     public struct State: Equatable {
         // for some reason on API page 0 and page 1 are the same
