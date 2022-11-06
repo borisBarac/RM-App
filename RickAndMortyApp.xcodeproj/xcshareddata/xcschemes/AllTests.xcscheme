@@ -29,7 +29,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "04357E3F290070BD00462801"
@@ -59,7 +59,7 @@
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "HelpersTests"
@@ -67,6 +67,11 @@
                BlueprintName = "HelpersTests"
                ReferencedContainer = "container:RMApp">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "HelpersTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
@@ -77,6 +82,11 @@
                BlueprintName = "HomePageTests"
                ReferencedContainer = "container:RMApp">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "HomePageSnapshotTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
@@ -97,6 +107,14 @@
                BlueprintName = "RMGraphQLTests"
                ReferencedContainer = "container:RMApp/RMGraphQL">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "RMApiTests/testGetCharactersWithIds()">
+               </Test>
+               <Test
+                  Identifier = "RMApiTests/testGetCharactersWithPage()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">

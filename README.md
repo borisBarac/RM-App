@@ -1,3 +1,5 @@
+[![RMApp CI](https://github.com/borisBarac/RM-App/actions/workflows/ios.yml/badge.svg)](https://github.com/borisBarac/RM-App/actions/workflows/ios.yml)
+
 # RMApp - Scalability test
  <br >Idea of this project is to test a couple of new technologies, and see how they scale and especially how they work together.
  <br >Technologies used are [GraphQL](https://graphql.org), [Apollo](https://www.apollographql.com/docs/ios), SPM, SwiftUI.
